@@ -15,38 +15,6 @@ A couple things are necessary for this bundle to work.  At first, add the Garlic
 composer require garlic/bus
 ```
 
-In the app/config/config.yml you will need the following parameters
-
-```yml
-enqueue:
-    transport:
-        default: 'amqp'
-        amqp:
-            driver: ext
-            host: "%env(RABBIT_HOST)%"
-            port: "%env(RABBIT_PORT)%"
-            user: "%env(RABBIT_USER)%"
-            pass: "%env(RABBIT_PASSWORD)%"
-            vhost: "%env(RABBIT_DEFAULT_VHOST)%"   
-            receive_method: basic_consume         
-    client:
-        app_name: "%env(SERVICE_NAMESPACE)%"
-```
-
-In the app/config/parameters.yml.dist you will need the following parameters
-```yml
-parameters:
-    # RabbitMQ config
-    env(RABBIT_HOST): rabbit
-    env(RABBIT_PORT): 5672
-    env(RABBIT_USER): {Rabbit user}
-    env(RABBIT_PASSWORD): {Rabbit pasword}
-    env(RABBIT_DEFAULT_VHOST): /
-
-    #App config
-    env(SERVICE_NAME): {your service name}
-    env(SERVICE_NAMESPACE): {your namemespace}
-
 ```
 Add to supervisor.conf lines below
 ```bash
@@ -61,7 +29,7 @@ user=www-data
 redirect_stderr=true
 ```
 
-### Now you can use MessageBusBundle
+### Now you can use Garlic Bus
 
 If you want to get response from current service you have to use 'request' method, like explained below
 
