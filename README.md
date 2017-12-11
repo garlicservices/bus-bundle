@@ -12,7 +12,7 @@ A couple things are necessary for this bundle to work.  At first, add the Garlic
 
 
 ```bash
-composer require imaximius/message-bus
+composer require garlic/bus
 ```
 
 In the app/config/config.yml you will need the following parameters
@@ -88,7 +88,7 @@ $data = $this->get('communicator')
     
 ```
 
-If you need send request by POST (or any other REST method) you only have to add ->post() (->get(), ->delete() etc.) before ->send
+If you need send request by POST (or any other REST method) just add ->post() etc. before call targetServiceAction()
 ```php
 $data = $this->get('communicator')
     ->request('targetServiceName')
