@@ -1,0 +1,24 @@
+{
+  "name": "garlic/bus",
+  "description": "Message Bus Bundle uses for communication among microservices through message bus (by default is RabbitMQ)",
+  "keywords": ["Microservises message bus", "Message bus", "Microservices"],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Maksym Churkyn",
+      "email": "imaximius@gmail.com"
+    }
+  ],
+  "type": "symfony-bundle",
+  "autoload": {
+    "psr-4": {
+      "MessageBusBundle\\": ""
+    }
+  },
+  "require": {
+    "php": ">=7.1",
+    "jms/serializer-bundle": "^2.3",
+    "enqueue/enqueue-bundle": "^0.8.9",
+    "enqueue/amqp-ext": "^0.8.9"
+  }
+}
