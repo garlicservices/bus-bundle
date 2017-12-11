@@ -66,54 +66,47 @@ redirect_stderr=true
 If you want to get response from current service you have to use 'request' method, like explained below
 
 ```php
-$data = $this->get('communicator')
-    ->request('{TARGET SERVICE NAME}')
-    ->{TARGET SERVICE ACTION ROUTE IN CAMELCASE}(
-        array $path = [],
-        string $method = 'GET',
-        array $query = [],
-        array $headers = [] 
+$data = $this->get('communicator') // Or the way that returns the same result $this->get(MessageBus:class)
+    ->request('targetServiceName')
+    ->targetServiceAction(   // CamelCased query where slashes ware changed to upper letter by magic
+        array $path = [],    // Path parameters to query
+        array $query = [],   // Post or Get parameters to the query
+        array $headers = []  // Additional headers
     );
     
 ```
 or
 ```php
 $data = $this->get('communicator')
-    ->request('{TARGET SERVICE NAME}')
+    ->request('targetServiceName')
     ->send(
-        string $route,
-        array $path = [],
-        string $method = 'GET',
+        string $route, // Route to the service action example: /user/get
+        array $path = [], 
         array $query = [],
         array $headers = [] 
     );
     
 ```
 
-If you need send request by POST (or any other REST method) you should add ->post() before ->send
+If you need send request by POST (or any other REST method) you only have to add ->post() (->get(), ->delete() etc.) before ->send
 ```php
 $data = $this->get('communicator')
-    ->request('{TARGET SERVICE NAME}')
+    ->request('targetServiceName')
     ->post()
-    ->send(
-        string $route,
+    ->targetServiceAction(
         array $path = [],
-        string $method = 'GET',
         array $query = [],
         array $headers = [] 
     );
 ```
 
-If you want send command (without answer) from target service use next solution
+If you want send a command (that never returns an answer) use next solution example
 ```php
 $data = $this->get('communicator')
-    ->command('{TARGET SERVICE NAME}')
-    ->{TARGET SERVICE ACTION ROUTE IN CAMELCASE}(
+    ->command('targetServiceName')
+    ->targetServiceAction( 
         array $path = [],
-        string $method = 'GET',
         array $query = [],
         array $headers = [] 
     );
 ```
-
-or something like other examples above.
