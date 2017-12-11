@@ -61,7 +61,7 @@ user=www-data
 redirect_stderr=true
 ```
 
-###Now you can use MessageBusBundle
+### Now you can use MessageBusBundle
 
 If you want to get response from current service you have to use 'request' method, like explained below
 
