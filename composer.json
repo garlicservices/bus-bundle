@@ -17,7 +17,6 @@
   },
   "require": {
     "php": ">=7.1",
-    "ext-amqp": ">=1.9.3",
     "jms/serializer-bundle": "^2.3",
     "enqueue/enqueue-bundle": "^0.8.9"
   }
