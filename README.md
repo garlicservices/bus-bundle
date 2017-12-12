@@ -6,27 +6,17 @@ MessageBusBundle is a protocol for messaging among services
 
 ## Configuration and Usage
 
-A couple things are necessary for this bundle to work.  At first, add the Garlic bus bundle to your composer.json
+A couple things are necessary for this bundle to work.  At first, add the Garlic bus bundle to your composer.json and at the second and add config/supervisor.conf file to your supervisor.
 
 ### Symfony 4 implementation
-
 
 ```bash
 composer require garlic/bus
 ```
+Change and than add config/supervisor.conf file to your supervisor folder.
 
-```
-Add to supervisor.conf lines below
 ```bash
-[program:communication]
-command={path to your service}/bin/console --env=prod --no-debug --time-limit="now + 5 minutes" --setup-broker enqueue:consume
-process_name=%(program_name)s_%(process_num)02d
-numprocs=4
-autostart=true
-autorestart=true
-startsecs=0
-user=www-data
-redirect_stderr=true
+cp config/supervisor.conf /etc/supervisor/conf.d/
 ```
 
 ### Now you can use Garlic Bus
@@ -34,7 +24,7 @@ redirect_stderr=true
 If you want to get response from current service you have to use 'request' method, like explained below
 
 ```php
-$data = $this->get('communicator') // Or the way that returns the same result $this->get(MessageBus:class)
+$data = $this->get('communicator') // Or the way that returns the same result is $this->get(MessageBus:class)
     ->request('targetServiceName')
     ->targetServiceAction(   // CamelCased query where slashes ware changed to upper letter by magic
         array $path = [],    // Path parameters to query
