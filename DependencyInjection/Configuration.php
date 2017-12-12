@@ -22,9 +22,7 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->children()
-                    ->scalarNode('transport')->end()
-                ->end()
+                ->scalarNode('transport')->end()
             ->end()
         ;
 
