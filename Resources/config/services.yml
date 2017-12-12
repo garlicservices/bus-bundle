@@ -5,7 +5,7 @@ services:
         public: false
 
     service.request.processor:
-        class: MessageBusBundle\Service\Processor\RequestProcessor
+        class: Garlic\Bus\Service\Processor\RequestProcessor
         arguments:
             - "@service.request"
             - "@service.response"
@@ -14,7 +14,7 @@ services:
             - { name: 'enqueue.client.processor'}
 
     service.command.processor:
-        class: MessageBusBundle\Service\Processor\CommandProcessor
+        class: Garlic\Bus\Service\Processor\CommandProcessor
         arguments:
             - "@service.request"
             - "@service.response"
@@ -23,7 +23,7 @@ services:
             - { name: 'enqueue.client.processor'}
 
     service.request.producer:
-        class: MessageBusBundle\Service\Producer\RequestProducer
+        class: Garlic\Bus\Service\Producer\RequestProducer
         arguments:
             - "@enqueue.transport.context"
             - '@enqueue.transport.rpc_factory'
@@ -32,7 +32,7 @@ services:
             - "%env(SERVICE_NAMESPACE)%"
 
     service.command.producer:
-        class: MessageBusBundle\Service\Producer\CommandProducer
+        class: Garlic\Bus\Service\Producer\CommandProducer
         arguments:
             - "@enqueue.transport.context"
             - '@enqueue.transport.rpc_factory'
@@ -41,17 +41,17 @@ services:
             - "%env(SERVICE_NAMESPACE)%"
 
     service.request:
-        class: MessageBusBundle\Service\Request\RequestService
+        class: Garlic\Bus\Service\Request\RequestService
         arguments:
             - "@jms_serializer.serializer"
 
     service.response:
-        class: MessageBusBundle\Service\Request\ResponseService
+        class: Garlic\Bus\Service\Request\ResponseService
         arguments:
             - "@jms_serializer.serializer"
 
-    MessageBusBundle\Service\CommunicatorService:
-        class: MessageBusBundle\Service\CommunicatorService
+    Garlic\Bus\Service\CommunicatorService:
+        class: Garlic\Bus\Service\CommunicatorService
         public: true
         arguments:
             - "@service.request.producer"
@@ -61,5 +61,5 @@ services:
             - "%env(SERVICE_NAMESPACE)%"
 
     communicator:
-        alias: MessageBusBundle\Service\CommunicatorService
+        alias: Garlic\Bus\Service\CommunicatorService
         public: true

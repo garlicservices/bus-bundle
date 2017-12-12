@@ -1,8 +1,8 @@
 <?php
 
-namespace Garlic\Service\Processor;
+namespace Garlic\Bus\Service\Processor;
 
-use Garlic\Service\Abstracts\ProcessorConfigAbstract;
+use Garlic\Bus\Service\Abstracts\ProcessorConfigAbstract;
 use Interop\Queue\PsrProcessor;
 use Interop\Queue\PsrMessage;
 use Interop\Queue\PsrContext;

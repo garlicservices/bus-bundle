@@ -1,6 +1,6 @@
 <?php
 
-namespace Garlic\Entity;
+namespace Garlic\Bus\Entity;
 
 use JMS\Serializer\Annotation\Type;
 

@@ -1,12 +1,12 @@
 <?php
 
-namespace Garlic\Service\Processor;
+namespace Garlic\Bus\Service\Processor;
 
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrMessage;
 use Interop\Queue\PsrProcessor;
 use Enqueue\Client\CommandSubscriberInterface;
-use Garlic\Service\Abstracts\ProcessorConfigAbstract;
+use Garlic\Bus\Service\Abstracts\ProcessorConfigAbstract;
 
 class CommandProcessor extends ProcessorConfigAbstract  implements PsrProcessor, CommandSubscriberInterface
 {

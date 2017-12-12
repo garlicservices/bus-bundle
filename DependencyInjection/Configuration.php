@@ -1,6 +1,6 @@
 <?php
 
-namespace Garlic\DependencyInjection;
+namespace Garlic\Bus\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;

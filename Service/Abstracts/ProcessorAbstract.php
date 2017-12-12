@@ -1,6 +1,6 @@
 <?php
 
-namespace Garlic\Service\Abstracts;
+namespace Garlic\Bus\Service\Abstracts;
 
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrMessage;
@@ -8,10 +8,10 @@ use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Garlic\Entity\Request as Data;
+use Garlic\Bus\Entity\Request as Data;
 use Symfony\Component\Routing\Router;
-use Garlic\Service\Request\RequestService;
-use Garlic\Service\Request\ResponseService;
+use Garlic\Bus\Service\Request\RequestService;
+use Garlic\Bus\Service\Request\ResponseService;
 
 /**
  * Class ProcessorAbstract

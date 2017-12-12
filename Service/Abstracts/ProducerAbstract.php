@@ -1,6 +1,6 @@
 <?php
 
-namespace Garlic\Service\Abstracts;
+namespace Garlic\Bus\Service\Abstracts;
 
 
 abstract class ProducerAbstract

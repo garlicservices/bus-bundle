@@ -1,6 +1,6 @@
 <?php
 
-namespace Garlic\DependencyInjection;
+namespace Garlic\Bus\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;

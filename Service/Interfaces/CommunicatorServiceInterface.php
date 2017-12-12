@@ -6,7 +6,7 @@
  * Time: 17:52
  */
 
-namespace Garlic\Service\Interfaces;
+namespace Garlic\Bus\Service\Interfaces;
 
 
 interface CommunicatorServiceInterface

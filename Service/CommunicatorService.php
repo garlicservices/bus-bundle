@@ -1,12 +1,12 @@
 <?php
 
-namespace Garlic\Service;
+namespace Garlic\Bus\Service;
 
-use Garlic\Service\Interfaces\CommunicatorServiceInterface;
-use Garlic\Service\Interfaces\ProducerInterface;
-use Garlic\Service\Producer\CommandProducer;
-use Garlic\Service\Producer\RequestProducer;
-use Garlic\Service\Request\RequestService;
+use Garlic\Bus\Service\Interfaces\CommunicatorServiceInterface;
+use Garlic\Bus\Service\Interfaces\ProducerInterface;
+use Garlic\Bus\Service\Producer\CommandProducer;
+use Garlic\Bus\Service\Producer\RequestProducer;
+use Garlic\Bus\Service\Request\RequestService;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class CommunicatorService implements CommunicatorServiceInterface

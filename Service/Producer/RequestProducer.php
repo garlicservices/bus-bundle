@@ -1,9 +1,9 @@
 <?php
 
-namespace Garlic\Service\Producer;
+namespace Garlic\Bus\Service\Producer;
 
-use Garlic\Service\Abstracts\RpcProducerAbstract;
-use Garlic\Service\Interfaces\ProducerInterface;
+use Garlic\Bus\Service\Abstracts\RpcProducerAbstract;
+use Garlic\Bus\Service\Interfaces\ProducerInterface;
 
 /**
  * Class RequestProducer

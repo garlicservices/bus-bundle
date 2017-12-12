@@ -1,6 +1,6 @@
 <?php
 
-namespace Garlic\Service\Abstracts;
+namespace Garlic\Bus\Service\Abstracts;
 
 /**
  * Class ProducerAbstract
@@ -11,7 +11,7 @@ use Enqueue\Client\Config;
 use Enqueue\Client\Message;
 use Enqueue\Client\Producer;
 use Enqueue\Rpc\RpcFactory;
-use Garlic\Service\Request\ResponseService;
+use Garlic\Bus\Service\Request\ResponseService;
 use Enqueue\Util\UUID;
 use Interop\Queue\PsrContext;
 
