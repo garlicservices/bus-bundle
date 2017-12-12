@@ -6,7 +6,7 @@
  * Time: 17:52
  */
 
-namespace MessageBusBundle\Service\Interfaces;
+namespace Garlic\Service\Interfaces;
 
 
 interface CommunicatorServiceInterface

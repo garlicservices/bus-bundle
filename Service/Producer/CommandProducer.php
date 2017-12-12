@@ -1,10 +1,10 @@
 <?php
 
-namespace MessageBusBundle\Service\Producer;
+namespace Garlic\Service\Producer;
 
-use MessageBusBundle\Entity\Response;
-use MessageBusBundle\Service\Abstracts\RpcProducerAbstract;
-use MessageBusBundle\Service\Interfaces\ProducerInterface;
+use Garlic\Entity\Response;
+use Garlic\Service\Abstracts\RpcProducerAbstract;
+use Garlic\Service\Interfaces\ProducerInterface;
 
 /**
  * Class RequestProducer

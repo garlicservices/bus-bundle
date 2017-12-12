@@ -1,6 +1,6 @@
 <?php
 
-namespace MessageBusBundle;
+namespace Garlic;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 

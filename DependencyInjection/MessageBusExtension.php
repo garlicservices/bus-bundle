@@ -1,6 +1,6 @@
 <?php
 
-namespace MessageBusBundle\DependencyInjection;
+namespace Garlic\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;

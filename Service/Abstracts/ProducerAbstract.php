@@ -1,6 +1,6 @@
 <?php
 
-namespace MessageBusBundle\Service\Abstracts;
+namespace Garlic\Service\Abstracts;
 
 
 abstract class ProducerAbstract

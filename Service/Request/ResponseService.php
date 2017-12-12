@@ -1,9 +1,9 @@
 <?php
 
-namespace MessageBusBundle\Service\Request;
+namespace Garlic\Service\Request;
 
-use MessageBusBundle\Entity\Request;
-use MessageBusBundle\Entity\Response;
+use Garlic\Entity\Request;
+use Garlic\Entity\Response;
 use JMS\Serializer\Serializer;
 
 class ResponseService

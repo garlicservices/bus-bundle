@@ -1,6 +1,6 @@
 <?php
 
-namespace MessageBusBundle\Service\Interfaces;
+namespace Garlic\Service\Interfaces;
 
 
 interface ProducerInterface

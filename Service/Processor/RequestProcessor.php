@@ -1,8 +1,8 @@
 <?php
 
-namespace MessageBusBundle\Service\Processor;
+namespace Garlic\Service\Processor;
 
-use MessageBusBundle\Service\Abstracts\ProcessorConfigAbstract;
+use Garlic\Service\Abstracts\ProcessorConfigAbstract;
 use Interop\Queue\PsrProcessor;
 use Interop\Queue\PsrMessage;
 use Interop\Queue\PsrContext;
