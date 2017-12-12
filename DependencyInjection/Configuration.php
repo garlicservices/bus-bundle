@@ -18,14 +18,12 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('garlic');
+        $rootNode = $treeBuilder->root('garlic_bus');
 
         $rootNode
             ->children()
-                ->arrayNode('bus')
-                    ->children()
-                        ->scalarNode('transport')->end()
-                    ->end()
+                ->children()
+                    ->scalarNode('transport')->end()
                 ->end()
             ->end()
         ;
