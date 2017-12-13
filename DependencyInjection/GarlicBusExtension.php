@@ -13,7 +13,7 @@ use Symfony\Component\DependencyInjection\Loader;
  *
  * @link http://symfony.com/doc/current/cookbook/bundles/extension.html
  */
-class MessageBusExtension extends Extension implements PrependExtensionInterface
+class GarlicBusExtension extends Extension implements PrependExtensionInterface
 {
     /**
      * {@inheritdoc}
