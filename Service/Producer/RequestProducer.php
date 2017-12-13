@@ -7,7 +7,7 @@ use Garlic\Bus\Service\Interfaces\ProducerInterface;
 
 /**
  * Class RequestProducer
- * @package MessageBusBundle\Producer\RequestProducer
+ * @package GarlicBusBundle\Producer\RequestProducer
  */
 class RequestProducer extends RpcProducerAbstract implements ProducerInterface
 {

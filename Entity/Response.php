@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  * Response format for communication bundle
  *
  * Class Request
- * @package MessageBusBundle\Entity
+ * @package GarlicBusBundle\Entity
  */
 class Response
 {

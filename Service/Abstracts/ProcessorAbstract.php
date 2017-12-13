@@ -15,7 +15,7 @@ use Garlic\Bus\Service\Request\ResponseService;
 
 /**
  * Class ProcessorAbstract
- * @package MessageBusBundle\Service\Abstracts
+ * @package GarlicBusBundle\Service\Abstracts
  */
 abstract class ProcessorAbstract
 {

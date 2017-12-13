@@ -47,7 +47,7 @@ class ResponseService
     {
         return $this->serializer->deserialize(
             $content,
-            'MessageBusBundle\Entity\Response',
+            'GarlicBusBundle\Entity\Response',
             'json'
         );
     }

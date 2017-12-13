@@ -8,7 +8,7 @@ use JMS\Serializer\Annotation\Type;
  * Request format for communication bundle
  *
  * Class Request
- * @package MessageBusBundle\Entity
+ * @package GarlicBusBundle\Entity
  */
 class Request
 {

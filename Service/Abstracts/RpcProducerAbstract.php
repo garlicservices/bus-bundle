@@ -4,7 +4,7 @@ namespace Garlic\Bus\Service\Abstracts;
 
 /**
  * Class ProducerAbstract
- * @package MessageBusBundle\Service\Abstracts
+ * @package GarlicBusBundle\Service\Abstracts
  */
 
 use Enqueue\Client\Config;

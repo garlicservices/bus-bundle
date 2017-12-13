@@ -4,7 +4,7 @@ namespace Garlic\Bus\Service\Abstracts;
 
 /**
  * Class CommandAbstract
- * @package MessageBusBundle\Service\Abstracts
+ * @package GarlicBusBundle\Service\Abstracts
  */
 abstract class ProcessorConfigAbstract extends ProcessorAbstract
 {
