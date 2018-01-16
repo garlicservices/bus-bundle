@@ -47,7 +47,7 @@ class RequestService
     {
         return $this->serializer->deserialize(
             $content,
-            'GarlicBusBundle\Entity\Request',
+            'Garlic\Bus\Entity\Request',
             'json'
         );
     }
