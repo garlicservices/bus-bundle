@@ -17,6 +17,7 @@ services:
 
     service.command.processor:
         class: Garlic\Bus\Service\Processor\CommandProcessor
+        public: true
         arguments:
             - "@service.request"
             - "@service.response"

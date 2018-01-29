@@ -26,6 +26,7 @@ class CommandProducer extends RpcProducerAbstract implements ProducerInterface
     public function send($message)
     {
         try {
+            $code = 200;
             $this->sendCommand($this->getTargetServiceName(), $message, false);
             $message = 'Command has been sent';
         } catch (\Exception $exception) {
@@ -35,7 +36,7 @@ class CommandProducer extends RpcProducerAbstract implements ProducerInterface
 
         return new Response(
             json_encode(['message' => $message]),
-            ($code) ?: 200
+            $code
         );
     }
 }
