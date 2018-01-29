@@ -6,10 +6,12 @@ services:
 
     service.request.processor:
         class: Garlic\Bus\Service\Processor\RequestProcessor
+        public: true
         arguments:
             - "@service.request"
             - "@service.response"
             - "@router"
+            - "@kernel"
         tags:
             - { name: 'enqueue.client.processor'}
 
@@ -19,6 +21,7 @@ services:
             - "@service.request"
             - "@service.response"
             - "@router"
+            - "@kernel"
         tags:
             - { name: 'enqueue.client.processor'}
 

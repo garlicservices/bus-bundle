@@ -2,6 +2,7 @@
 
 namespace Garlic\Bus\Service\Abstracts;
 
+use App\Kernel;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrMessage;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
@@ -28,6 +29,9 @@ abstract class ProcessorAbstract
     /** @var  ResponseService */
     protected $response;
 
+    /** @var Kernel */
+    protected $kernel;
+
     /** @var  array */
     protected static $parameters;
 
@@ -47,11 +51,13 @@ abstract class ProcessorAbstract
     public function __construct(
         RequestService $request,
         ResponseService $response,
-        Router $router
+        Router $router,
+        Kernel $kernel
     ) {
         $this->request = $request;
         $this->response = $response;
         $this->router = $router;
+        $this->kernel = $kernel;
     }
 
     /**
@@ -105,7 +111,7 @@ abstract class ProcessorAbstract
             $route = $this->router->match($route['path']);
         }
 
-        $kernel = new \MicroKernel('prod', false);
+        $kernel = clone $this->kernel;
         $request = $this->request($data, $route);
         $response = $kernel->handle($request);
         $kernel->terminate($request, $response);
