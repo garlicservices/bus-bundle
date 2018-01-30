@@ -36,7 +36,7 @@ class CommandProducer extends RpcProducerAbstract implements ProducerInterface
 
         return new Response(
             json_encode(['message' => $message]),
-            $code
+            (!empty($code)) ? $code : 500
         );
     }
 }
