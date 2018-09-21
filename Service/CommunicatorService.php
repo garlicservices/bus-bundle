@@ -94,7 +94,7 @@ class CommunicatorService implements CommunicatorServiceInterface
 
         return $this;
     }
-
+    
     /**
      * Send request (event/command)
      *

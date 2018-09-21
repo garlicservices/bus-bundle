@@ -19,6 +19,7 @@
     "php": ">=7.1",
     "jms/serializer-bundle": "^2.3",
     "enqueue/enqueue-bundle": "^0.8.9",
-    "enqueue/amqp-ext": "^0.8.9"
+    "enqueue/amqp-ext": "^0.8.9",
+    "ext-json": "*"
   }
 }
