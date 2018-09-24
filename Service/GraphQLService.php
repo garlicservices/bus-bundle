@@ -50,6 +50,7 @@ class GraphQLService
             $data[$serviceName] = $this->communicatorService
                 ->request($serviceName)
                 ->graphql([], implode("\n", $request))
+                ->getData()
             ;
         }
         
