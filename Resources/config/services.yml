@@ -67,3 +67,9 @@ services:
     communicator:
         alias: Garlic\Bus\Service\CommunicatorService
         public: true
+
+    Garlic\Bus\Service\GraphQLService:
+        class: Garlic\Bus\Service\GraphQLService
+        public: true
+        arguments:
+        - "@communicator"

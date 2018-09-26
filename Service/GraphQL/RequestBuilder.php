@@ -15,10 +15,10 @@ class RequestBuilder
      *
      * @return QueryBuilder
      */
-    public function createQuery(): QueryBuilder
+    public function createQuery(string $from): QueryBuilder
     {
         $qid = uniqid('gqid', true);
-        $this->queries[$qid] = new QueryBuilder();
+        $this->queries[$qid] = new QueryBuilder($from);
 
         return $this->queries[$qid];
     }

@@ -4,7 +4,7 @@ namespace Garlic\Bus\Service\GraphQL;
 
 use Garlic\Bus\Service\GraphQL\Exceptions\GraphQLQueryException;
 
-class QueryBuilder
+class QueryBuilder extends QueryGenerator
 {
     /**
      * @var array
@@ -22,6 +22,16 @@ class QueryBuilder
     private $fields = [];
     
     /**
+     * QueryBuilder constructor.
+     * @param string $query
+     */
+    public function __construct(string $query)
+    {
+        $this->query = $query;
+    }
+    
+    
+    /**
      * Add query fields to select
      *
      * @param null $select
@@ -31,6 +41,20 @@ class QueryBuilder
     {
         $selects = is_array($select) ? $select : func_get_args();
         $this->fields = $selects;
+        
+        return $this;
+    }
+    
+    /**
+     * Add select
+     *
+     * @param string $name
+     * @param $value
+     * @return QueryBuilder
+     */
+    public function addSelect(string $name, $value): QueryBuilder
+    {
+        $this->fields[$name] = $value;
         
         return $this;
     }
@@ -94,6 +118,6 @@ class QueryBuilder
             throw new GraphQLQueryException('Query myst contains at least one requested field. Use method select() to set it.');
         }
         
-        return "{".$this->query."(".json_encode($this->arguments)."{".json_encode($this->fields)."})}";
+        return "{".$this->query."(".$this->createArguments($this->arguments)."){".$this->createFields($this->fields)."}}";
     }
 }

@@ -12,7 +12,7 @@ class GraphQLService
     private $requests = [];
     
     /**
-     * @var CommunicatorService
+     * @var CommunicatorService CommunicatorService
      */
     private $communicatorService;
     
@@ -39,17 +39,22 @@ class GraphQLService
     }
     
     /**
-     * Execute queries and fetch received data
+     * Execute queries and returns received data
      *
      * @return array
      */
     public function fetch(): array
     {
         $data = [];
+        
+        /**
+         * @var string $serviceName
+         * @var RequestBuilder $request
+         */
         foreach ($this->requests as $serviceName => $request){
             $data[$serviceName] = $this->communicatorService
                 ->request($serviceName)
-                ->graphql([], implode("\n", $request))
+                ->graphql([], ['query' => implode("\n", $request->getQueries())])
                 ->getData()
             ;
         }
