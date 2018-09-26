@@ -20,7 +20,6 @@
     "jms/serializer-bundle": "^2.3",
     "enqueue/enqueue-bundle": "^0.9",
     "enqueue/amqp-ext": "^0.9",
-    "enqueue/async-command":"^0.9",
     "ext-json": "*"
   }
 }
