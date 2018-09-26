@@ -47,8 +47,7 @@ class GarlicBusExtension extends Extension implements PrependExtensionInterface
             ],
             'client' => [
                 'app_name' => getenv('SERVICE_NAME')
-            ],
-            'async_commands' => true
+            ]
         ];
 
         $container->prependExtensionConfig('enqueue', $config);

@@ -29,7 +29,7 @@ If you want to get response from current service you have to use 'request' metho
 $data = $this->get('communicator') // Or you can call by class name. Example: $this->get(GarlicBus:class)
     ->request('targetServiceName') // Type of message. So far you can use ->request() or ->command() methods. Command provide mesage type that not need response. 
     ->get()                        // Set one of REST methods (get, post, put, delete). Bu default set GET 
-    ->targetServiceAction(         // CamelCased route where slashes ware changed to upper letter by magic (example: getUser will changed to /get/user)
+    ->targetServiceAction(         // CamelCased route where slashes vere changed to upper letter by magic (example: getUser will changed to /get/user)
         array $path = [],          // Path parameters to query (example: ['user' => 1])
         array $query = [],         // Post or Get parameters to the query
         array $headers = []        // Additional headers
