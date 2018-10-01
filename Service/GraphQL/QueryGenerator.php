@@ -44,4 +44,45 @@ class QueryGenerator
     
         return implode(',', $result);
     }
+    
+    /**
+     * Prepare query arguments
+     *
+     * @param array $arguments
+     * @return array
+     */
+    public function prepareArguments(array $arguments): array
+    {
+        foreach ($arguments as $key => $incoming){
+            $argument = explode('=', $incoming);
+        
+            switch (true) {
+                case (is_numeric($argument[1])):
+                    $arguments[trim($argument[0])] = (int)$argument[1];
+                    break;
+            
+                case ($this->checkBool($argument[1])):
+                    $arguments[trim($argument[0])] = (boolean)$argument[1];
+                    break;
+            
+                default:
+                    $arguments[trim($argument[0])] = trim($argument[1]);
+            }
+        
+            unset($arguments[$key]);
+        }
+        
+        return $arguments;
+    }
+    
+    /**
+     * Check if string is boolean
+     *
+     * @param $string
+     * @return bool
+     */
+    private function checkBool($string)
+    {
+        return (in_array(strtolower($string), ["true", "false", "1", "0", "yes", "no"], true));
+    }
 }
