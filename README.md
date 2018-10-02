@@ -1,11 +1,12 @@
 # Garlic message bus
 
-This bundle allow microservices communicate to each other with RabbitMQ transport by providing message bus
-For correct usage the Bundle must be installed on both services (current and target)
+This bundle allow microservices communicate to each other with RabbitMQ transport by providing message bus.
+
+For correct usage the Bundle must be installed on both ends of communication (current and target services)
 
 ## Installation
 
-A couple things are necessary for this bundle to work.  At first, add the Garlic bus bundle to your composer.json and at the second and add config/supervisor.conf file to your supervisor.
+Just a couple things are necessary for this bundle works. 
 
 ### Add garlic/bus bundle to your composer.json
 
