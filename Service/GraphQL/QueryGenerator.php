@@ -2,7 +2,9 @@
     
 namespace Garlic\Bus\Service\GraphQL;
 
-class QueryGenerator 
+use Dflydev\DotAccessData\Data;
+
+class QueryGenerator
 {
     /**
      * Return arguments string
@@ -71,8 +73,36 @@ class QueryGenerator
         
             unset($arguments[$key]);
         }
+    
+        $argumetsData = new Data();
+        foreach ($arguments as $key => $value) {
+            $argumetsData->set($key, $value);
+        }
+    
+        return $argumetsData->export();
+    }
+    
+    /**
+     * Conver field names from dotted to array type
+     *
+     * @param array $fields
+     * @return mixed
+     */
+    public function prepareFields(array $fields)
+    {
+        $data = new Data();
+        foreach ($fields as $value) {
+            $data->set($value);
+        }
+    
+        $result = $data->export();
+        array_walk_recursive($result, function(&$item, $key){
+            if(empty($item) && !empty($key)) {
+                $item = $key;
+            }
+        });
         
-        return $arguments;
+        return $result;
     }
     
     /**

@@ -67,7 +67,7 @@ class GraphQLService extends QueryHelper
             
             /** @var QueryBuilder $query */
             foreach ($request as $queryName => $query) {
-                $query->setResult($result['data'][$queryName]);
+                $query->setResult((!empty($result['data'])) ? $result['data'][$queryName] : null);
             }
         }
         

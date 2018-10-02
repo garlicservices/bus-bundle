@@ -40,21 +40,7 @@ class QueryBuilder extends QueryGenerator
     public function select($select = null): QueryBuilder
     {
         $selects = is_array($select) ? $select : func_get_args();
-        $this->fields = $selects;
-        
-        return $this;
-    }
-    
-    /**
-     * Add select
-     *
-     * @param string $name
-     * @param $value
-     * @return QueryBuilder
-     */
-    public function addSelect(string $name, $value): QueryBuilder
-    {
-        $this->fields[$name] = $value;
+        $this->fields = $this->prepareFields($selects);
         
         return $this;
     }
@@ -89,20 +75,6 @@ class QueryBuilder extends QueryGenerator
             $this->arguments,
             $arguments
         );
-        
-        return $this;
-    }
-    
-    /**
-     * Add argument to the query
-     *
-     * @param string $name
-     * @param $value
-     * @return QueryBuilder
-     */
-    public function addWhere(string $name, $value): QueryBuilder
-    {
-        $this->arguments[$name] = $value;
         
         return $this;
     }

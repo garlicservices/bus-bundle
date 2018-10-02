@@ -76,21 +76,11 @@ $result = $graphQLService->fetch();
 
 ##### Querying internal related objects
 
-Example of query data from related objects
+Example of querying data from related objects
 ```php
 $apartmentQuery = $graphQLService->createQuery('serviceName.QueryName');
-$apartmentQuery->select(
-        [
-            'id',
-            'buildYear'
-            'address' => [
-                'id',
-                'city',
-                'country',
-                'zipcode'
-            ]
-        ]
-    )
+$apartmentQuery
+    ->select('id', 'buildYear', 'address.id', 'address.city', 'address.country')
     ->where('size = 5');
     
 $result = $graphQLService->fetch();    
@@ -101,26 +91,9 @@ $result = $graphQLService->fetch();
 Example of searching data on included objects
 ```php
 $apartmentQuery = $graphQLService->createQuery('serviceName.QueryName');
-$apartmentQuery->select(
-        [
-            'id',
-            'buildYear'
-            'address' => [
-                'id',
-                'city',
-                'country',
-                'zipcode'
-            ]
-        ]
-    )
-    ->where(
-        [
-            'size' => 5,
-            'address' => [
-                'country' => 'Ukraine'
-            ]
-        ]
-    );
+$apartmentQuery
+    ->select('id', 'buildYear', 'address.id', 'address.city', 'address.country')
+    ->where('size = 5', 'address.country = Ukraine');
     
 $result = $graphQLService->fetch();
 ```
@@ -139,13 +112,8 @@ $addressQuery
 ;
 
 $apartmentQuery = $graphQLService->createQuery('secondServiceName.QueryName');
-$apartmentQuery->select(
-        [
-            'id',
-            'size',
-            'addressId'
-        ]
-    )
+$apartmentQuery
+    ->select('id', 'size', 'addressId')
     ->where('size = 5')
     ->stitchOne($addressQuery, 'address', 'addressId', 'id')
 ;
@@ -162,17 +130,14 @@ Example of query stitching to one another by using stitchMany() method (stitch r
 $graphQLService = $this->get(GraphQLService::class);
 
 $addressQuery = $graphQLService->createQuery('firstServiceName.QueryName');
-
-...
+$addressQuery
+    ->select('id', 'city', 'country')
+    ->where('country = Ukraine')
+;
 
 $apartmentQuery = $graphQLService->createQuery('secondServiceName.QueryName');
-$apartmentQuery->select(
-        [
-            'id',
-            'size',
-            'addressId'
-        ]
-    )
+$apartmentQuery
+    ->select('id', 'size', 'addressId')
     ->where('size = 5')
     ->stitchMany($addressQuery, 'address', 'addressId', 'id')
 ;
@@ -195,18 +160,10 @@ $addressQuery
 ;
 
 $apartmentQuery = $graphQLService->createQuery('secondServiceName.QueryName');
-$apartmentQuery->select(
-        [
-            'id',
-            'size',
-            'address' => [
-                'id',
-                'city'
-            ]
-        ]
-    )
+$apartmentQuery
+    ->select('id', 'size', 'address.id', 'address.city', 'address.country')
     ->where('size = 5')
-    ->stitchOne($addressQuery, 'address', 'address.id', 'id')
+    ->stitchOne($addressQuery, 'fullAddress', 'address.id', 'id')
 ;
 
 $result = $graphQLService->fetch();
