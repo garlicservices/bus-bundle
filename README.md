@@ -3,27 +3,35 @@
 This bundle allow microservices communicate to each other with RabbitMQ transport by providing message bus
 For correct usage the Bundle must be installed on both services (current and target)
 
-## Configuration and Usage
+## Installation
 
 A couple things are necessary for this bundle to work.  At first, add the Garlic bus bundle to your composer.json and at the second and add config/supervisor.conf file to your supervisor.
 
-### Symfony 4 implementation
+### Add garlic/bus bundle to your composer.json
 
 ```bash
 composer require garlic/bus
 ```
 
-Run
-
-Change and than add config/supervisor.conf file to your supervisor folder.
+### Run processor as a Daemon (add configuration to your supervisor.conf)
 
 ```bash
-cp config/supervisor.conf /etc/supervisor/conf.d/
+[program:garlic_communication]
+command=/var/www/bin/console --env=prod --no-debug enqueue:consume --setup-broker
+process_name=%(program_name)s_%(process_num)02d
+numprocs=4
+autostart=true
+autorestart=true
+tartsecs=0
+user=www-data
+redirect_stderr=true
 ```
 
-### Now you can use Garlic Bus
+## Usage
 
-#### Common way to use 
+Now you can use Garlic Bus
+
+### Common way to use 
 
 If you want to get response from current service you have to use 'request' method, like explained below
 
@@ -52,14 +60,14 @@ $data = $this->get('communicator')
     
 ```
 
-#### GraphQL way to get result from service (several services)
+### GraphQL way to get result from service (several services)
 
 **Important:** If you want to use GraphQL wrapper you have to install [garlicservices/graphql-bundle](https://github.com/garlicservices/graphql-bundle) on all the services you requiested in your queries.
 To install bundle on application just type in console the command showed below
 ```bash
 composer require garlic/grpahql-bundle
 ```
-##### Easy way to use GraphQl query
+#### Easy way to use GraphQl query
 
 Simple example of query data from remote microservice
 
@@ -74,7 +82,7 @@ $addressQuery
 $result = $graphQLService->fetch();
 ````
 
-##### Querying internal related objects
+#### Querying internal related objects
 
 Example of querying data from related objects
 ```php
@@ -86,7 +94,7 @@ $apartmentQuery
 $result = $graphQLService->fetch();    
 ```
 
-##### Searching on internal related objects
+#### Searching on internal related objects
 
 Example of searching data on included objects
 ```php
@@ -98,7 +106,7 @@ $apartmentQuery
 $result = $graphQLService->fetch();
 ```
 
-##### Querying external related objects (stitchOne)
+#### Querying external related objects (stitchOne)
 
 Example of query stitching to one another by using stitchOne() method (stitch result will be included as object)
 
@@ -122,7 +130,7 @@ $result = $graphQLService->fetch();
 
 ```
 
-##### Querying external related list of objects (stitchMany) 
+#### Querying external related list of objects (stitchMany) 
 
 Example of query stitching to one another by using stitchMany() method (stitch result will be included as list of objects)
 
@@ -146,7 +154,7 @@ $result = $graphQLService->fetch();
 
 ```
 
-##### Querying stitching by using internaly included objects
+#### Querying stitching by using internaly included objects
 
 Example of stitching queries by fields from internaly included objects
 
@@ -169,3 +177,5 @@ $apartmentQuery
 $result = $graphQLService->fetch();
 
 ```
+
+##Enjoy
