@@ -4,30 +4,26 @@ namespace Garlic\Bus\Service;
 
 use Dflydev\DotAccessData\Data;
 use Garlic\Bus\Service\GraphQL\Exceptions\GraphQLQueryException;
-use Garlic\Bus\Service\GraphQL\QueryBuilder;
+use Garlic\Bus\Service\GraphQL\Mutation\CreateMutationBuilder;
+use Garlic\Bus\Service\GraphQL\Mutation\DeleteMutationBuilder;
+use Garlic\Bus\Service\GraphQL\Mutation\MutationBuilder;
+use Garlic\Bus\Service\GraphQL\Mutation\UpdateMutationBuilder;
+use Garlic\Bus\Service\GraphQL\Query\QueryBuilder;
 use Garlic\Bus\Service\GraphQL\QueryHelper;
 use Garlic\Bus\Service\GraphQL\QueryRelation;
 
 class GraphQLService extends QueryHelper
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     private $queries = [];
     
-    /**
-     * @var array
-     */
+    /** @var array */
     private $requests = [];
     
-    /**
-     * @var array
-     */
+    /** @var array */
     private $result = [];
     
-    /**
-     * @var CommunicatorService CommunicatorService
-     */
+    /** @var CommunicatorService CommunicatorService */
     private $communicatorService;
     
     /**
@@ -40,7 +36,7 @@ class GraphQLService extends QueryHelper
     }
     
     /**
-     * Add query name that will be used on requested service
+     * Create query builder
      *
      * @return QueryBuilder
      */
@@ -49,6 +45,62 @@ class GraphQLService extends QueryHelper
         $meta = $this->parsQueryName($from);
         $this->requests[$meta['service']][$meta['query']] = new QueryBuilder($meta['query']);
         
+        return $this->requests[$meta['service']][$meta['query']];
+    }
+    
+    /**
+     * Create mutation builder
+     *
+     * @param string $from
+     * @return MutationBuilder
+     */
+    public function createMutation(string $from): MutationBuilder
+    {
+        $meta = $this->parsQueryName($from);
+        $this->requests[$meta['service']][$meta['query']] = new MutationBuilder($meta['query']);
+    
+        return $this->requests[$meta['service']][$meta['query']];
+    }
+    
+    /**
+     * Create mutation builder for inserting new row
+     *
+     * @param string $from
+     * @return CreateMutationBuilder
+     */
+    public function createNewMutation(string $from): CreateMutationBuilder
+    {
+        $meta = $this->parsQueryName($from);
+        $this->requests[$meta['service']][$meta['query']] = new CreateMutationBuilder($meta['query']);
+    
+        return $this->requests[$meta['service']][$meta['query']];
+    }
+    
+    /**
+     * Create mutation builder for updating rows
+     *
+     * @param string $from
+     * @return UpdateMutationBuilder
+     */
+    public function createUpdateMutation(string $from): UpdateMutationBuilder
+    {
+        $meta = $this->parsQueryName($from);
+        $this->requests[$meta['service']][$meta['query']] = new UpdateMutationBuilder($meta['query']);
+    
+        return $this->requests[$meta['service']][$meta['query']];
+    }
+    
+    /**
+     * Create mutation builder for deleting rows
+     *
+     * @param string $from
+     * @return DeleteMutationBuilder
+     */
+    public function createDeleteMutation(string $from): DeleteMutationBuilder
+    {
+        $meta = $this->parsQueryName($from);
+        $this->requests[$meta['service']][$meta['query']] = new DeleteMutationBuilder($meta['query']);
+    
         return $this->requests[$meta['service']][$meta['query']];
     }
     
@@ -105,7 +157,7 @@ class GraphQLService extends QueryHelper
     {
         $queryDataResults = $query->getResult();
         $queryArrayResults = $query->getArrayResult();
-        if($this->ckeckResultIsObject($queryArrayResults)) {
+        if($this->checkResultIsObject($queryArrayResults)) {
             $queryArrayResults = [$queryArrayResults];
         }
         
@@ -113,7 +165,7 @@ class GraphQLService extends QueryHelper
         foreach ($query->getStitched() as $relation) {
             $relationDataResults = $relation->getQuery()->getResult();
             $relationArrayResults = $relation->getQuery()->getArrayResult();
-            if($this->ckeckResultIsObject($relationArrayResults)) {
+            if($this->checkResultIsObject($relationArrayResults)) {
                 $relationArrayResults = [$relationArrayResults];
             }
             
@@ -138,16 +190,5 @@ class GraphQLService extends QueryHelper
         $query->setResult($queryDataResults->export());
         
         return $query->getResult()->export();
-    }
-    
-    /**
-     * Check result is object
-     *
-     * @param $result
-     * @return bool
-     */
-    private function ckeckResultIsObject($result)
-    {
-        return array_keys($result) !== range(0, count($result) - 1);
     }
 }

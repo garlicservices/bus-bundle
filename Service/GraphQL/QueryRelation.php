@@ -72,7 +72,7 @@ class QueryRelation
      *
      * @return QueryBuilder
      */
-    public function getQuery(): QueryBuilder
+    public function getQuery(): QueryBuilderInterface
     {
         return $this->query;
     }
@@ -83,7 +83,7 @@ class QueryRelation
      * @param QueryBuilder $query
      * @return QueryRelation
      */
-    public function setQuery(QueryBuilder $query): QueryRelation
+    public function setQuery(QueryBuilderInterface $query): QueryRelation
     {
         $this->query = $query;
         return $this;

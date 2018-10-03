@@ -8,6 +8,7 @@ class QueryHelper
     /**
      * Parse query name
      *
+     * @param string $from
      * @return array
      */
     public function parsQueryName(string $from): array 
@@ -21,5 +22,16 @@ class QueryHelper
             'service' => $meta[0],
             'query' => $meta[1],
         ];
+    }
+    
+    /**
+     * Check result is object
+     *
+     * @param $result
+     * @return bool
+     */
+    public function checkResultIsObject($result)
+    {
+        return array_keys($result) !== range(0, count($result) - 1);
     }
 }
