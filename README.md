@@ -70,7 +70,7 @@ composer require garlic/grpahql-bundle
 ```
 #### Easy way to use GraphQl query
 
-Simple example of query data from remote microservice
+Simple example of querying data from remote microservice
 
 ````php
 $graphQLService = $this->get(GraphQLService::class);
@@ -109,7 +109,7 @@ $result = $graphQLService->fetch();
 
 #### Querying external related objects (stitchOne)
 
-Example of query stitching to one another by using stitchOne() method (stitch result will be included as object)
+Example of query stitching to one another by using stitchOne() method (stitched result will be included as an object)
 
 ```php
 $graphQLService = $this->get(GraphQLService::class);
@@ -128,12 +128,11 @@ $apartmentQuery
 ;
 
 $result = $graphQLService->fetch();
-
 ```
 
 #### Querying external related list of objects (stitchMany) 
 
-Example of query stitching to one another by using stitchMany() method (stitch result will be included as list of objects)
+Example of stitching queries to one another by using stitchMany() method (stitched result will be included as list of objects)
 
 ```php
 $graphQLService = $this->get(GraphQLService::class);
@@ -152,12 +151,11 @@ $apartmentQuery
 ;
 
 $result = $graphQLService->fetch();
-
 ```
 
-#### Querying stitching by using internaly included objects
+#### Querying stitching by using internally included objects
 
-Example of stitching queries by fields from internaly included objects
+Example of stitching queries with fields from internally included objects
 
 ```php
 $graphQLService = $this->get(GraphQLService::class);
@@ -176,7 +174,40 @@ $apartmentQuery
 ;
 
 $result = $graphQLService->fetch();
+```
 
+### GraphQL mutations
+
+Mutation is the way to change service data by sending some kinds of query. What this queries are and how they could created read below.
+
+#### Create new data with GraphQL mutation
+
+Example of creating new data row on remote microservice. Method "set" put new fields data in a query and method "select" contains fields that will be returned after query done.   
+
+```php
+$apartmentQuery = $graphQLService->createNewMutation('ServiceName.CreateMutationName');
+$apartmentQuery
+    ->set('size = 3', 'buildYear = 2018')
+    ->select('id');
+```
+
+#### Update data with GraphQL mutation
+
+```php
+$apartmentQuery = $graphQLService->createUpdateMutation('ServiceName.UpdateMutationName');
+$apartmentQuery
+    ->set('size = 3', 'buildYear = 2018')
+    ->where('size = 5')
+    ->select('id');
+```
+
+#### Delete data with GraphQL mutation
+
+```php
+$apartmentQuery = $graphQLService->createDeleteMutation('ServiceName.DeleteMutationName');
+$apartmentQuery
+    ->where('size = 5')
+    ->select('id');
 ```
 
 ## Enjoy
