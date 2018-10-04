@@ -250,4 +250,6 @@ $apartmentQuery
 $result = $graphQLService->fetch();    
 ```
 
+You can use stitching with query and mutation and vise-versa. Even several mutation can be stitched to one another.
+
 ## Enjoy
