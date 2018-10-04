@@ -59,7 +59,7 @@ abstract class AbstractQueryBuilder extends QueryGenerator
     /**
      * Stitch a query to the current query
      *
-     * @param QueryBuilder $query
+     * @param QueryBuilderInterface $query
      * @param string $alias
      * @param string $current
      * @param string $target
@@ -67,7 +67,7 @@ abstract class AbstractQueryBuilder extends QueryGenerator
      * @return $this
      */
     public function stitch(
-        QueryBuilder $query,
+        QueryBuilderInterface $query,
         string $alias,
         string $current,
         string $target,
@@ -89,14 +89,14 @@ abstract class AbstractQueryBuilder extends QueryGenerator
      * Make One to One relation between queries
      * Stitch first found result
      *
-     * @param QueryBuilder $query
+     * @param QueryBuilderInterface $query
      * @param string $alias
      * @param string $currentField
      * @param string $targetField
      * @return $this
      */
     public function stitchOne(
-        QueryBuilder $query,
+        QueryBuilderInterface $query,
         string $alias,
         string $currentField,
         string $targetField
@@ -108,14 +108,14 @@ abstract class AbstractQueryBuilder extends QueryGenerator
      * Make One to Many relation between queries
      * Stitch list of results
      *
-     * @param QueryBuilder $query
+     * @param QueryBuilderInterface $query
      * @param string $alias
      * @param string $currentField
      * @param string $targetField
      * @return $this
      */
     public function stitchMany(
-        QueryBuilder $query,
+        QueryBuilderInterface $query,
         string $alias,
         string $currentField,
         string $targetField
