@@ -28,9 +28,9 @@ user=www-data
 redirect_stderr=true
 ```
 
-## Usage
-
 Now you can use Garlic Bus
+
+## Usage
 
 ### Common way to use 
 
@@ -87,6 +87,8 @@ $result = $graphQLService->fetch();
 
 Example of querying data from related objects
 ```php
+$graphQLService = $this->get(GraphQLService::class);
+
 $apartmentQuery = $graphQLService->createQuery('serviceName.QueryName');
 $apartmentQuery
     ->select('id', 'buildYear', 'address.id', 'address.city', 'address.country')
@@ -99,6 +101,8 @@ $result = $graphQLService->fetch();
 
 Example of searching data on included objects
 ```php
+$graphQLService = $this->get(GraphQLService::class);
+
 $apartmentQuery = $graphQLService->createQuery('serviceName.QueryName');
 $apartmentQuery
     ->select('id', 'buildYear', 'address.id', 'address.city', 'address.country')
@@ -185,29 +189,41 @@ Mutation is the way to change service data by sending some kinds of query. What 
 Example of creating new data row on remote microservice. Method "set" put new fields data in a query and method "select" contains fields that will be returned after query done.   
 
 ```php
+$graphQLService = $this->get(GraphQLService::class);
+
 $apartmentQuery = $graphQLService->createNewMutation('ServiceName.CreateMutationName');
 $apartmentQuery
     ->set('size = 3', 'buildYear = 2018')
     ->select('id');
+    
+$result = $graphQLService->fetch();    
 ```
 
 #### Update data with GraphQL mutation
 
 ```php
+$graphQLService = $this->get(GraphQLService::class);
+
 $apartmentQuery = $graphQLService->createUpdateMutation('ServiceName.UpdateMutationName');
 $apartmentQuery
     ->set('size = 3', 'buildYear = 2018')
     ->where('size = 5')
     ->select('id');
+    
+$result = $graphQLService->fetch();    
 ```
 
 #### Delete data with GraphQL mutation
 
 ```php
+$graphQLService = $this->get(GraphQLService::class);
+
 $apartmentQuery = $graphQLService->createDeleteMutation('ServiceName.DeleteMutationName');
 $apartmentQuery
     ->where('size = 5')
     ->select('id');
+    
+$result = $graphQLService->fetch();    
 ```
 
 ## Enjoy
