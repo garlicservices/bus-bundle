@@ -191,8 +191,8 @@ Example of creating new data row on remote microservice. Method "set" put new fi
 ```php
 $graphQLService = $this->get(GraphQLService::class);
 
-$apartmentQuery = $graphQLService->createNewMutation('ServiceName.CreateMutationName');
-$apartmentQuery
+$apartmentMutation = $graphQLService->createNewMutation('ServiceName.CreateMutationName');
+$apartmentMutation
     ->set('size = 3', 'buildYear = 2018')
     ->select('id');
     
@@ -204,8 +204,8 @@ $result = $graphQLService->fetch();
 ```php
 $graphQLService = $this->get(GraphQLService::class);
 
-$apartmentQuery = $graphQLService->createUpdateMutation('ServiceName.UpdateMutationName');
-$apartmentQuery
+$apartmentMutation = $graphQLService->createUpdateMutation('ServiceName.UpdateMutationName');
+$apartmentMutation
     ->set('size = 3', 'buildYear = 2018')
     ->where('size = 5')
     ->select('id');
@@ -218,10 +218,34 @@ $result = $graphQLService->fetch();
 ```php
 $graphQLService = $this->get(GraphQLService::class);
 
-$apartmentQuery = $graphQLService->createDeleteMutation('ServiceName.DeleteMutationName');
-$apartmentQuery
+$apartmentMutation = $graphQLService->createDeleteMutation('ServiceName.DeleteMutationName');
+$apartmentMutation
     ->where('size = 5')
     ->select('id');
+    
+$result = $graphQLService->fetch();    
+```
+
+#### Query stitching in Mutation
+
+Query stitching works the same way as in query mode. Just try, it's amazing!
+
+Example of Create Mutation with next stitching to the query.
+
+```php
+$graphQLService = $this->get(GraphQLService::class);
+
+$addressMutation = $graphQLService->createNewMutation('FirstServiceName.CreateMutationName');
+$addressMutation
+    ->set('city = Kyiv', 'country = Ukraine')
+    ->select('id');
+    
+$apartmentQuery = $graphQLService->createQuery('SecondServiceName.QueryName');
+$apartmentQuery
+    ->select('id', 'size', 'address.id', 'address.city', 'address.country')
+    ->where('size = 5')
+    ->stitchOne($addressMutation, 'newAddress', 'address.country', 'country')
+;    
     
 $result = $graphQLService->fetch();    
 ```
