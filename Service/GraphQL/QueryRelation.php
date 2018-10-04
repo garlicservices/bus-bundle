@@ -80,7 +80,7 @@ class QueryRelation
     /**
      * Set query
      *
-     * @param QueryBuilder $query
+     * @param QueryBuilderInterface $query
      * @return QueryRelation
      */
     public function setQuery(QueryBuilderInterface $query): QueryRelation

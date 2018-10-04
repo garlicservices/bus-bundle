@@ -28,10 +28,11 @@ class QueryBuilder extends AbstractQueryBuilder implements QueryBuilderInterface
             throw new GraphQLQueryException('Query must contains at least one selected field. Use method select() to set it.');
         }
     
+        $arguments = '';
         if(count($this->arguments) > 0) {
             $arguments = "(".$this->createArguments($this->arguments).")";
         }
-        
+    
         return "{".$this->query." $arguments {".$this->createFields($this->fields)."}}";
     }
 }

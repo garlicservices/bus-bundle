@@ -2,7 +2,6 @@
 
 namespace Garlic\Bus\Service\GraphQL;
 
-
 trait WhereQueryTrait
 {
     /** @var array */

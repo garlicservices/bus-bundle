@@ -15,13 +15,7 @@ use Garlic\Bus\Service\GraphQL\QueryRelation;
 class GraphQLService extends QueryHelper
 {
     /** @var array */
-    private $queries = [];
-    
-    /** @var array */
     private $requests = [];
-    
-    /** @var array */
-    private $result = [];
     
     /** @var CommunicatorService CommunicatorService */
     private $communicatorService;
@@ -38,7 +32,9 @@ class GraphQLService extends QueryHelper
     /**
      * Create query builder
      *
+     * @param string $from
      * @return QueryBuilder
+     * @throws GraphQLQueryException
      */
     public function createQuery(string $from): QueryBuilder
     {
@@ -53,6 +49,7 @@ class GraphQLService extends QueryHelper
      *
      * @param string $from
      * @return MutationBuilder
+     * @throws GraphQLQueryException
      */
     public function createMutation(string $from): MutationBuilder
     {
@@ -67,6 +64,7 @@ class GraphQLService extends QueryHelper
      *
      * @param string $from
      * @return CreateMutationBuilder
+     * @throws GraphQLQueryException
      */
     public function createNewMutation(string $from): CreateMutationBuilder
     {
@@ -81,6 +79,7 @@ class GraphQLService extends QueryHelper
      *
      * @param string $from
      * @return UpdateMutationBuilder
+     * @throws GraphQLQueryException
      */
     public function createUpdateMutation(string $from): UpdateMutationBuilder
     {
@@ -95,6 +94,7 @@ class GraphQLService extends QueryHelper
      *
      * @param string $from
      * @return DeleteMutationBuilder
+     * @throws GraphQLQueryException
      */
     public function createDeleteMutation(string $from): DeleteMutationBuilder
     {
@@ -133,6 +133,7 @@ class GraphQLService extends QueryHelper
      */
     private function stitchQueries()
     {
+        $result = [];
         foreach ($this->requests as $serviceName => $request) {
             /** @var QueryBuilder $query */
             foreach ($request as $queryName => $query) {

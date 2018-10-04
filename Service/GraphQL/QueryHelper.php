@@ -3,6 +3,8 @@
 namespace Garlic\Bus\Service\GraphQL;
 
 
+use Garlic\Bus\Service\GraphQL\Exceptions\GraphQLQueryException;
+
 class QueryHelper
 {
     /**
@@ -10,6 +12,7 @@ class QueryHelper
      *
      * @param string $from
      * @return array
+     * @throws GraphQLQueryException
      */
     public function parsQueryName(string $from): array 
     {

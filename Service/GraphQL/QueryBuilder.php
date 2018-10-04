@@ -83,8 +83,10 @@ class QueryBuilder extends QueryGenerator
      * Stitch a query to the current query
      *
      * @param QueryBuilder $query
+     * @param string $alias
      * @param string $current
      * @param string $target
+     * @param int $type
      * @return QueryBuilder
      */
     public function stitch(
