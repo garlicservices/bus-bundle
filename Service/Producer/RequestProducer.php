@@ -24,11 +24,31 @@ class RequestProducer extends RpcProducerAbstract implements ProducerInterface
      */
     public function send($message)
     {
-       
         return $this->response->hydrate(
             $this->sendCommand($this->getTargetServiceName(), $message, true)
                 ->receive()
                 ->getBody()
         );
+    }
+
+    /**
+     * Return promise value to be postprocessed
+     *
+     * @param $message
+     * @return bool|\Enqueue\Rpc\Promise
+     */
+    public function getPromise($message)
+    {
+        return $this->sendCommand($this->getTargetServiceName(), $message, true);
+    }
+
+    /**
+     * Get responce instance
+     *
+     * @return \Garlic\Bus\Service\Request\ResponseService
+     */
+    public function getResponse()
+    {
+        return $this->response;
     }
 }

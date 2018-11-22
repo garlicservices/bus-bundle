@@ -168,6 +168,16 @@ abstract class AbstractQueryBuilder extends QueryGenerator
     }
     
     /**
+     * Return query name as string
+     *
+     * @return string
+     */
+    public function getQueryName()
+    {
+        return $this->query;
+    }
+    
+    /**
      * Create query as a string
      *
      * @return string

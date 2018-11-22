@@ -3,6 +3,7 @@
 namespace Garlic\Bus\Service;
 
 use Dflydev\DotAccessData\Data;
+use Enqueue\Rpc\Promise;
 use Garlic\Bus\Service\GraphQL\Exceptions\GraphQLQueryException;
 use Garlic\Bus\Service\GraphQL\Mutation\CreateMutationBuilder;
 use Garlic\Bus\Service\GraphQL\Mutation\DeleteMutationBuilder;
@@ -11,6 +12,7 @@ use Garlic\Bus\Service\GraphQL\Mutation\UpdateMutationBuilder;
 use Garlic\Bus\Service\GraphQL\Query\QueryBuilder;
 use Garlic\Bus\Service\GraphQL\QueryHelper;
 use Garlic\Bus\Service\GraphQL\QueryRelation;
+use Interop\Amqp\Impl\AmqpMessage;
 
 class GraphQLService extends QueryHelper
 {
@@ -103,6 +105,47 @@ class GraphQLService extends QueryHelper
     
         return $this->requests[$meta['service']][$meta['query']];
     }
+
+    /**
+     * Sending queries into Bus and returning Promises for post-process
+     *
+     * @return mixed
+     * @throws \ReflectionException
+     */
+    public function fetchAsync()
+    {
+        $promises = [];
+        
+        $promiseLinks = [];
+
+        foreach ($this->requests as $serviceName => $request) {
+            /** @var QueryBuilder $query */
+            foreach ($request as $queryName => $query) {
+                $service = $this->communicatorService
+                    ->request($serviceName);
+
+                $promise = $service->sendAsync('graphql', [], ['query' => (string)$query]);
+
+                $promises[] = $promise;
+                $promiseLinks[$this->getPromiseCorrelationId($promise)] = $query;
+            }
+        }
+        
+        foreach ($promises as $key => $promise) {
+            /** @var AmqpMessage $result */
+            $result = $promise->receive();
+            $corellationId = $result->getHeader('correlation_id');
+
+            $response = $service->getProducer()
+                ->getResponse()
+                ->hydrate($result->getBody())
+                ->getData();
+
+            $promiseLinks[$corellationId]->setResult((!empty($response['data'])) ? $response['data'][$promiseLinks[$corellationId]->getQueryName()] : null);
+        }
+
+        return $this->stitchQueries();
+    }
     
     /**
      * Execute queries and returns received data
@@ -114,6 +157,7 @@ class GraphQLService extends QueryHelper
         foreach ($this->requests as $serviceName => $request) {
             $result = $this->communicatorService
                 ->request($serviceName)
+                /** @var CommunicatorService::__call('graphql'), ... */
                 ->graphql([], ['query' => implode("\n", $request)])
                 ->getData();
             
@@ -191,5 +235,22 @@ class GraphQLService extends QueryHelper
         $query->setResult($queryDataResults->export());
         
         return $query->getResult()->export();
+    }
+
+    /**
+     * Fetching enqueue correlationId from created Promise
+     *
+     * @param Promise $promise
+     * @return mixed
+     * @throws \ReflectionException
+     */
+    protected function getPromiseCorrelationId(Promise $promise)
+    {
+        $reflectionClass = new \ReflectionClass($promise);
+        $reflectionProperty = $reflectionClass->getProperty('receiveCallback');
+        $reflectionProperty->setAccessible(true);
+        $reflect = new \ReflectionFunction($reflectionProperty->getValue($promise));
+
+        return $reflect->getStaticVariables()['correlationId'];
     }
 }
