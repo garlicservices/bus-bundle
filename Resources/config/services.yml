@@ -64,23 +64,13 @@ services:
             - "@request_stack"
             - "%env(SERVICE_NAMESPACE)%"
 
-    Garlic\Bus\Service\QueryPoolService:
-        class: Garlic\Bus\Service\QueryPoolService
-        public: true
-        arguments:
-        - "@communicator"
-
     communicator:
         alias: Garlic\Bus\Service\CommunicatorService
-        public: true
-
-    queryPool:
-        alias: Garlic\Bus\Service\QueryPoolService
         public: true
 
     Garlic\Bus\Service\GraphQLService:
         class: Garlic\Bus\Service\GraphQLService
         public: true
-        arguments:
-        - "@communicator"
-        - "@queryPool"
+
+    Garlic\Bus\Service\Pool\:
+      resource: '../../Service/Pool/*'

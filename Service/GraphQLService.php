@@ -12,6 +12,7 @@ use Garlic\Bus\Service\GraphQL\Mutation\UpdateMutationBuilder;
 use Garlic\Bus\Service\GraphQL\Query\QueryBuilder;
 use Garlic\Bus\Service\GraphQL\QueryHelper;
 use Garlic\Bus\Service\GraphQL\QueryRelation;
+use Garlic\Bus\Service\Pool\QueryPoolService;
 use Interop\Amqp\Impl\AmqpMessage;
 
 class GraphQLService extends QueryHelper

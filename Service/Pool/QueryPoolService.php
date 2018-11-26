@@ -1,8 +1,9 @@
 <?php
 
-namespace Garlic\Bus\Service;
+namespace Garlic\Bus\Service\Pool;
 
 use Enqueue\Rpc\Promise;
+use Garlic\Bus\Service\CommunicatorService;
 use Garlic\Bus\Service\GraphQL\AbstractQueryBuilder;
 use Interop\Amqp\Impl\AmqpMessage;
 
