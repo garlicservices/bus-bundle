@@ -226,6 +226,25 @@ $apartmentMutation
 $result = $graphQLService->fetch();    
 ```
 
+#### Making async batch request with parallel processing
+
+```php
+$graphQLService = $this->get(GraphQLService::class);
+
+$addressMutation = $graphQLService->createNewMutation('template.AddressCreate');
+$addressMutation
+    ->select('id', 'country', 'city')
+    ->set('country = Ukraine', 'city = Boyarka', 'street = Kyivska', 'zipcode = 20214', 'house = 1');
+
+$apartmentQuery = $graphQLService->createQuery('template.AddressFind');
+$apartmentQuery
+    ->select('id')
+    ->where(['id' => 123])
+;
+
+$result = $graphQLService->fetchAsync(); 
+```
+
 #### Query stitching in Mutation
 
 Query stitching works the same way as in query mode. Just try, it's amazing!

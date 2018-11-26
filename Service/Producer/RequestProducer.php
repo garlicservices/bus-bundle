@@ -25,7 +25,7 @@ class RequestProducer extends RpcProducerAbstract implements ProducerInterface
     public function send($message)
     {
         return $this->response->hydrate(
-            $this->sendCommand($this->getTargetServiceName(), $message, true)
+            $this->getPromise($message)
                 ->receive()
                 ->getBody()
         );

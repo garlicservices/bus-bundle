@@ -21,14 +21,21 @@ class GraphQLService extends QueryHelper
     
     /** @var CommunicatorService CommunicatorService */
     private $communicatorService;
+
+    /** @var QueryPoolService QueryPoolService */
+    private $queryPoolService;
     
     /**
      * GraphQLService constructor.
      * @param CommunicatorService $communicatorService
+     * @param QueryPoolService $queryPoolService
      */
-    public function __construct(CommunicatorService $communicatorService)
-    {
+    public function __construct(
+        CommunicatorService $communicatorService,
+        QueryPoolService $queryPoolService
+    ) {
         $this->communicatorService = $communicatorService;
+        $this->queryPoolService = $queryPoolService;
     }
     
     /**
@@ -114,35 +121,18 @@ class GraphQLService extends QueryHelper
      */
     public function fetchAsync()
     {
-        $promises = [];
-        
-        $promiseLinks = [];
-
         foreach ($this->requests as $serviceName => $request) {
             /** @var QueryBuilder $query */
             foreach ($request as $queryName => $query) {
-                $service = $this->communicatorService
-                    ->request($serviceName);
+                $service = $this->communicatorService->request($serviceName);
 
                 $promise = $service->sendAsync('graphql', [], ['query' => (string)$query]);
 
-                $promises[] = $promise;
-                $promiseLinks[$this->getPromiseCorrelationId($promise)] = $query;
+                $this->queryPoolService->addAsyncQuery($query, $serviceName, $promise);
             }
         }
-        
-        foreach ($promises as $key => $promise) {
-            /** @var AmqpMessage $result */
-            $result = $promise->receive();
-            $corellationId = $result->getHeader('correlation_id');
 
-            $response = $service->getProducer()
-                ->getResponse()
-                ->hydrate($result->getBody())
-                ->getData();
-
-            $promiseLinks[$corellationId]->setResult((!empty($response['data'])) ? $response['data'][$promiseLinks[$corellationId]->getQueryName()] : null);
-        }
+        $this->queryPoolService->resolve();
 
         return $this->stitchQueries();
     }
@@ -235,22 +225,5 @@ class GraphQLService extends QueryHelper
         $query->setResult($queryDataResults->export());
         
         return $query->getResult()->export();
-    }
-
-    /**
-     * Fetching enqueue correlationId from created Promise
-     *
-     * @param Promise $promise
-     * @return mixed
-     * @throws \ReflectionException
-     */
-    protected function getPromiseCorrelationId(Promise $promise)
-    {
-        $reflectionClass = new \ReflectionClass($promise);
-        $reflectionProperty = $reflectionClass->getProperty('receiveCallback');
-        $reflectionProperty->setAccessible(true);
-        $reflect = new \ReflectionFunction($reflectionProperty->getValue($promise));
-
-        return $reflect->getStaticVariables()['correlationId'];
     }
 }
