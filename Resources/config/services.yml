@@ -71,5 +71,6 @@ services:
     Garlic\Bus\Service\GraphQLService:
         class: Garlic\Bus\Service\GraphQLService
         public: true
-        arguments:
-        - "@communicator"
+
+    Garlic\Bus\Service\Pool\:
+      resource: '../../Service/Pool/*'

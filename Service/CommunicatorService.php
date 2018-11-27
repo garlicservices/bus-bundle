@@ -123,6 +123,34 @@ class CommunicatorService implements CommunicatorServiceInterface
     }
 
     /**
+     * Send query/message to queue and returns Promise
+     *
+     * @param string $route
+     * @param array $path
+     * @param array $query
+     * @param array $headers
+     * @return mixed
+     */
+    public function sendAsync(
+        string $route,
+        array $path = [],
+        array $query = [],
+        array $headers = []
+    ) {
+        $request = $this->requestStack->getCurrentRequest();
+        $headers = array_merge(null === $request ? [] : $request->headers->all(), $headers);
+
+        $promise = $this->producer->getPromise(
+            $this->requestService->create(($route != 'root')?$this->convertToPath($route):'/', $path, $query, $headers, $this->method)
+        );
+
+
+        $this->method = 'GET';
+
+        return $promise;
+    }
+
+    /**
      * Create post request
      *
      * @return $this
@@ -167,5 +195,15 @@ class CommunicatorService implements CommunicatorServiceInterface
     private function convertToPath($input)
     {
         return '/'.strtolower(preg_replace('/(?<!^)[A-Z]/', '/$0', $input));
+    }
+
+    /**
+     * Get producer instance
+     *
+     * @return ProducerInterface
+     */
+    public function getProducer()
+    {
+        return $this->producer;
     }
 }
