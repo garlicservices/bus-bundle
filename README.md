@@ -269,6 +269,14 @@ $apartmentQuery
 $result = $graphQLService->fetch();    
 ```
 
+### Event dispatching
+Mass event dispatching with aTopic name for all working daemons, and array is a payload to work with.
+```
+$this->get(CommunicatorService::class)
+    ->event('eventTopicName', ['some' => 'value']);
+```
+
+
 You can use stitching with query and mutation and vise-versa. Even several mutation can be stitched to one another.
 
 ## Enjoy

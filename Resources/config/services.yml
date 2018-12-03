@@ -4,8 +4,8 @@ services:
         autoconfigure: true
         public: false
 
-    service.request.processor:
-        class: Garlic\Bus\Service\Processor\RequestProcessor
+    app.servicediscovery.processor:
+        class: Garlic\Bus\Service\Processor\ServiceDiscoveryProcessor
         public: true
         arguments:
             - "@service.request"
@@ -13,18 +13,7 @@ services:
             - "@router"
             - "@kernel"
         tags:
-            - { name: 'enqueue.client.processor'}
-
-    service.command.processor:
-        class: Garlic\Bus\Service\Processor\CommandProcessor
-        public: true
-        arguments:
-            - "@service.request"
-            - "@service.response"
-            - "@router"
-            - "@kernel"
-        tags:
-            - { name: 'enqueue.client.processor'}
+            - { name: 'enqueue.client.processor', topicName: 'serviceDiscovery'}
 
     service.request.producer:
         class: Garlic\Bus\Service\Producer\RequestProducer
@@ -37,6 +26,15 @@ services:
 
     service.command.producer:
         class: Garlic\Bus\Service\Producer\CommandProducer
+        arguments:
+            - "@enqueue.transport.context"
+            - '@enqueue.transport.rpc_factory'
+            - "@service.response"
+            - "%env(SERVICE_NAME)%"
+            - "%env(SERVICE_NAMESPACE)%"
+
+    service.event.producer:
+        class: Garlic\Bus\Service\Producer\EventProducer
         arguments:
             - "@enqueue.transport.context"
             - '@enqueue.transport.rpc_factory'
@@ -58,6 +56,7 @@ services:
         class: Garlic\Bus\Service\CommunicatorService
         public: true
         arguments:
+            - "@service.event.producer"
             - "@service.request.producer"
             - "@service.command.producer"
             - "@service.request"
