@@ -4,6 +4,28 @@ services:
         autoconfigure: true
         public: false
 
+    service.request.processor:
+        class: Garlic\Bus\Service\Processor\RequestProcessor
+        public: true
+        arguments:
+            - "@service.request"
+            - "@service.response"
+            - "@router"
+            - "@kernel"
+        tags:
+            - { name: 'enqueue.client.processor'}
+
+    service.command.processor:
+        class: Garlic\Bus\Service\Processor\CommandProcessor
+        public: true
+        arguments:
+            - "@service.request"
+            - "@service.response"
+            - "@router"
+            - "@kernel"
+        tags:
+            - { name: 'enqueue.client.processor'}
+
     app.servicediscovery.processor:
         class: Garlic\Bus\Service\Processor\ServiceDiscoveryProcessor
         public: true

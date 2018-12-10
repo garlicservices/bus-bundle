@@ -66,7 +66,7 @@ $data = $this->get('communicator')
 **Important:** If you want to use GraphQL wrapper you have to install [garlicservices/graphql-bundle](https://github.com/garlicservices/graphql-bundle) on all the services you requiested in your queries.
 To install bundle on application just type in console the command showed below
 ```bash
-composer require garlic/grpahql-bundle
+composer require garlic/graphql-bundle
 ```
 #### Easy way to use GraphQl query
 
