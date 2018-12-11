@@ -5,6 +5,7 @@ namespace Garlic\Bus\Service;
 use Garlic\Bus\Service\Interfaces\CommunicatorServiceInterface;
 use Garlic\Bus\Service\Interfaces\ProducerInterface;
 use Garlic\Bus\Service\Producer\CommandProducer;
+use Garlic\Bus\Service\Producer\EventProducer;
 use Garlic\Bus\Service\Producer\RequestProducer;
 use Garlic\Bus\Service\Request\RequestService;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -34,21 +35,32 @@ class CommunicatorService implements CommunicatorServiceInterface
     /** @var CommandProducer */
     private $commandProducer;
 
+    /** @var EventProducer */
+    private $eventProducer;
+
     /**
      * CommunicatorService constructor.
+     * @param EventProducer $eventProducer
      * @param RequestProducer $requestProducer
      * @param CommandProducer $commandProducer
      * @param RequestService $request
      * @param RequestStack $requestStack
      * @param $namespace
      */
-    public function __construct(RequestProducer $requestProducer, CommandProducer $commandProducer, RequestService $request, RequestStack $requestStack, $namespace)
-    {
+    public function __construct(
+        EventProducer $eventProducer,
+        RequestProducer $requestProducer,
+        CommandProducer $commandProducer,
+        RequestService $request,
+        RequestStack $requestStack,
+        $namespace
+    ) {
         $this->requestProducer = $requestProducer;
         $this->requestService = $request;
         $this->requestStack = $requestStack;
         $this->namespace = $namespace;
         $this->commandProducer = $commandProducer;
+        $this->eventProducer = $eventProducer;
     }
 
     /**
@@ -78,6 +90,21 @@ class CommunicatorService implements CommunicatorServiceInterface
     public function request($service)
     {
         $this->producer = $this->requestProducer->setTargetServiceName($service);
+
+        return $this;
+    }
+
+    /**
+     * Create event producer to the service
+     *
+     * @param $eventName
+     * @return $this
+     */
+    public function event($eventName, array $payload)
+    {
+        $this->producer = $this->eventProducer->setTargetServiceName($eventName);
+
+        $this->send($eventName, $payload);
 
         return $this;
     }
