@@ -26,6 +26,17 @@ services:
         tags:
             - { name: 'enqueue.client.processor'}
 
+    service.event.processor:
+        class: Garlic\Bus\Service\Processor\MulticastEventProcessor
+        public: true
+        arguments:
+            - "@service.request"
+            - "@service.response"
+            - "@router"
+            - "@kernel"
+        tags:
+            - { name: 'enqueue.client.processor', topicName: 'multicast_event'}
+
     service.request.producer:
         class: Garlic\Bus\Service\Producer\RequestProducer
         arguments:
@@ -37,6 +48,15 @@ services:
 
     service.command.producer:
         class: Garlic\Bus\Service\Producer\CommandProducer
+        arguments:
+            - "@enqueue.transport.context"
+            - '@enqueue.transport.rpc_factory'
+            - "@service.response"
+            - "%env(SERVICE_NAME)%"
+            - "%env(SERVICE_NAMESPACE)%"
+
+    service.event.producer:
+        class: Garlic\Bus\Service\Producer\EventProducer
         arguments:
             - "@enqueue.transport.context"
             - '@enqueue.transport.rpc_factory'
@@ -58,6 +78,7 @@ services:
         class: Garlic\Bus\Service\CommunicatorService
         public: true
         arguments:
+            - "@service.event.producer"
             - "@service.request.producer"
             - "@service.command.producer"
             - "@service.request"
