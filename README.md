@@ -269,12 +269,27 @@ $apartmentQuery
 $result = $graphQLService->fetch();    
 ```
 
-### Event dispatching
-Mass event dispatching with aTopic name for all working daemons, and array is a payload to work with.
+### Event dispatching && processing
+Mass event dispatching with automatic ```bus.``` prefix name for all working daemons, and array is a payload to work with.
 ```
 $this->get(CommunicatorService::class)
-    ->event('eventTopicName', ['some' => 'value']);
+    ->event('event.name', ['some' => 'value']);
 ```
+Processing is built over native symfony events, but prefixed to ```bus.``` namespace and similar to 
+```
+$dispatcher->addListener('bus.event.name', function (BusEvent $event) {
+    $payload = $event->getPayload();
+    // processing logic....
+ });
+```
+Specially separated **ServiceDiscovery** event is related to [garlicservices/healthcheck-bundle](https://github.com/garlicservices/healthcheck-bundle) for automatic introspection status update and getting basic microservice metrics and healthcheck.
+
+Typical scenario is Gateway emitting event and collecting / process returned metrics.
+```
+$this->get(CommunicatorService::class)
+    ->serviceDiscoveryEvent(['some' => 'value']);
+```
+
 
 
 You can use stitching with query and mutation and vise-versa. Even several mutation can be stitched to one another.
