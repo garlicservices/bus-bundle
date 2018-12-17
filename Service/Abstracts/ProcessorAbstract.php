@@ -5,6 +5,7 @@ namespace Garlic\Bus\Service\Abstracts;
 use App\Kernel;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrMessage;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,6 +33,9 @@ abstract class ProcessorAbstract
     /** @var Kernel */
     protected $kernel;
 
+    /** @var LoggerInterface */
+    protected $logger;
+
     /** @var  array */
     protected static $parameters;
 
@@ -52,12 +56,14 @@ abstract class ProcessorAbstract
         RequestService $request,
         ResponseService $response,
         Router $router,
-        Kernel $kernel
+        Kernel $kernel,
+        LoggerInterface $logger
     ) {
         $this->request = $request;
         $this->response = $response;
         $this->router = $router;
         $this->kernel = $kernel;
+        $this->logger = $logger;
     }
 
     /**
@@ -70,6 +76,10 @@ abstract class ProcessorAbstract
 
         try {
             $response = $this->run($data);
+
+            if ($response->getStatusCode() == 500) {
+                $this->logger->error($response->getContent());
+            }
         } catch (ResourceNotFoundException $exception) {
             $response = new Response(
                 'Route not found',
@@ -177,6 +187,7 @@ abstract class ProcessorAbstract
      */
     protected function check($status)
     {
+        var_dump($status);
         if(($status >= Response::HTTP_OK) && ($status < Response::HTTP_MULTIPLE_CHOICES)) {
             return true;
         }
