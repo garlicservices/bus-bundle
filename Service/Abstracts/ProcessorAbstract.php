@@ -187,7 +187,6 @@ abstract class ProcessorAbstract
      */
     protected function check($status)
     {
-        var_dump($status);
         if(($status >= Response::HTTP_OK) && ($status < Response::HTTP_MULTIPLE_CHOICES)) {
             return true;
         }
