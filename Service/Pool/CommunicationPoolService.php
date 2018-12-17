@@ -53,8 +53,7 @@ class CommunicationPoolService
                 ($route != 'root') ? $this->convertToPath($route) : '/',
                 $path,
                 $query,
-                $headers,
-                $this->method
+                $headers
             )
         );
 
