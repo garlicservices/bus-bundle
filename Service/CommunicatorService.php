@@ -4,6 +4,7 @@ namespace Garlic\Bus\Service;
 
 use Garlic\Bus\Service\Interfaces\CommunicatorServiceInterface;
 use Garlic\Bus\Service\Interfaces\ProducerInterface;
+use Garlic\Bus\Service\Pool\CommunicationPoolService;
 use Garlic\Bus\Service\Producer\CommandProducer;
 use Garlic\Bus\Service\Producer\RequestProducer;
 use Garlic\Bus\Service\Request\RequestService;
@@ -19,7 +20,7 @@ class CommunicatorService implements CommunicatorServiceInterface
     /** @var  RequestService */
     private $requestService;
 
-    /** @var  ProducerInterface */
+    /** @var ProducerInterface */
     private $producer;
 
     /** @var  RequestStack */
@@ -34,21 +35,32 @@ class CommunicatorService implements CommunicatorServiceInterface
     /** @var CommandProducer */
     private $commandProducer;
 
+    /** @var CommunicationPoolService */
+    private $communicationPoolService;
+
     /**
      * CommunicatorService constructor.
+     * @param CommunicationPoolService $communicationPoolService
      * @param RequestProducer $requestProducer
      * @param CommandProducer $commandProducer
      * @param RequestService $request
      * @param RequestStack $requestStack
      * @param $namespace
      */
-    public function __construct(RequestProducer $requestProducer, CommandProducer $commandProducer, RequestService $request, RequestStack $requestStack, $namespace)
-    {
+    public function __construct(
+        CommunicationPoolService $communicationPoolService,
+        RequestProducer $requestProducer,
+        CommandProducer $commandProducer,
+        RequestService $request,
+        RequestStack $requestStack,
+        $namespace
+    ) {
         $this->requestProducer = $requestProducer;
         $this->requestService = $request;
         $this->requestStack = $requestStack;
         $this->namespace = $namespace;
         $this->commandProducer = $commandProducer;
+        $this->communicationPoolService = $communicationPoolService;
     }
 
     /**
@@ -63,7 +75,7 @@ class CommunicatorService implements CommunicatorServiceInterface
         return call_user_func_array(
             [$this, 'send'],
             array_merge(
-                [($name != 'root')?$this->convertToPath($name):'/'],
+                [($name != 'root') ? $this->convertToPath($name) : '/'],
                 $arguments
             )
         );
@@ -94,7 +106,7 @@ class CommunicatorService implements CommunicatorServiceInterface
 
         return $this;
     }
-    
+
     /**
      * Send request (event/command)
      *
@@ -120,34 +132,6 @@ class CommunicatorService implements CommunicatorServiceInterface
         $this->method = 'GET';
 
         return $response;
-    }
-
-    /**
-     * Send query/message to queue and returns Promise
-     *
-     * @param string $route
-     * @param array $path
-     * @param array $query
-     * @param array $headers
-     * @return mixed
-     */
-    public function sendAsync(
-        string $route,
-        array $path = [],
-        array $query = [],
-        array $headers = []
-    ) {
-        $request = $this->requestStack->getCurrentRequest();
-        $headers = array_merge(null === $request ? [] : $request->headers->all(), $headers);
-
-        $promise = $this->producer->getPromise(
-            $this->requestService->create(($route != 'root')?$this->convertToPath($route):'/', $path, $query, $headers, $this->method)
-        );
-
-
-        $this->method = 'GET';
-
-        return $promise;
     }
 
     /**
@@ -205,5 +189,15 @@ class CommunicatorService implements CommunicatorServiceInterface
     public function getProducer()
     {
         return $this->producer;
+    }
+
+    /**
+     * Return communication pool service for async request
+     *
+     * @return CommunicationPoolService
+     */
+    public function createPool()
+    {
+        return $this->communicationPoolService;
     }
 }

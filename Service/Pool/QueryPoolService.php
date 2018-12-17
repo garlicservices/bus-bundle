@@ -12,6 +12,7 @@ class QueryPoolService
     protected $promises = [];
     protected $services = [];
     protected $queryBuilders = [];
+    protected $queryResults = [];
 
     /** @var CommunicatorService CommunicatorService */
     private $communicatorService;
@@ -24,13 +25,11 @@ class QueryPoolService
     /**
      * Add query to queue
      *
-     * @param AbstractQueryBuilder $queryBuilder
      * @param string $serviceName
      * @param Promise $promise
      * @throws \ReflectionException
      */
     public function addAsyncQuery(
-        AbstractQueryBuilder $queryBuilder,
         string $serviceName,
         Promise $promise
     ) {
@@ -38,7 +37,6 @@ class QueryPoolService
 
         $this->promises[$correlationId] = $promise;
         $this->services[$correlationId] = $serviceName;
-        $this->queryBuilders[$correlationId] = $queryBuilder;
     }
 
     /**
@@ -56,10 +54,10 @@ class QueryPoolService
                 ->hydrate($result->getBody())
                 ->getData();
 
-            $this->queryBuilders[$correlationId]->setResult(
-                (!empty($response['data'])) ? $response['data'][$this->queryBuilders[$correlationId]->getQueryName()] : null
-            );
+            $this->queryResults[$this->services[$correlationId]] = !empty($response['data']) ? $response['data'] : null;
         }
+
+        return $this->queryResults;
     }
 
     /**
