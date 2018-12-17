@@ -15,6 +15,7 @@ services:
             - "@service.response"
             - "@router"
             - "@kernel"
+            - "@logger"
         tags:
             - { name: 'enqueue.client.processor'}
 
@@ -26,6 +27,7 @@ services:
             - "@service.response"
             - "@router"
             - "@kernel"
+            - "@logger"
         tags:
             - { name: 'enqueue.client.processor'}
 
