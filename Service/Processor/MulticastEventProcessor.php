@@ -11,14 +11,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
-class MulticastEventProcessor extends ProcessorConfigAbstract implements PsrProcessor, TopicSubscriberInterface
+class MulticastEventProcessor extends ProcessorConfigAbstract implements PsrProcessor
 {
     protected $prefix = 'bus.';
-
-    public static function getSubscribedTopics()
-    {
-        return ['multicast_event'];
-    }
 
     /**
      * Emit bus multicast messages to symfony kernel instance
