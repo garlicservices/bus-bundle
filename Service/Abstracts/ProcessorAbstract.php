@@ -77,7 +77,7 @@ abstract class ProcessorAbstract
         try {
             $response = $this->run($data);
 
-            if ($response->getStatusCode() == 500) {
+            if ($response->getStatusCode() >= 400) {
                 $this->logger->error($response->getContent());
             }
         } catch (ResourceNotFoundException $exception) {
@@ -187,7 +187,7 @@ abstract class ProcessorAbstract
      */
     protected function check($status)
     {
-        if(($status >= Response::HTTP_OK) && ($status < Response::HTTP_MULTIPLE_CHOICES)) {
+        if (($status >= Response::HTTP_OK) && ($status < Response::HTTP_MULTIPLE_CHOICES)) {
             return true;
         }
 
