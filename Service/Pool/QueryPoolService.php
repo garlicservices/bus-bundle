@@ -3,8 +3,7 @@
 namespace Garlic\Bus\Service\Pool;
 
 use Enqueue\Rpc\Promise;
-use Garlic\Bus\Service\CommunicatorService;
-use Garlic\Bus\Service\GraphQL\AbstractQueryBuilder;
+use Garlic\Bus\Service\Interfaces\CommunicatorServiceInterface;
 use Interop\Amqp\Impl\AmqpMessage;
 
 class QueryPoolService
@@ -14,14 +13,6 @@ class QueryPoolService
     protected $queryBuilders = [];
     protected $queryResults = [];
 
-    /** @var CommunicatorService CommunicatorService */
-    private $communicatorService;
-
-    public function __construct(CommunicatorService $communicatorService)
-    {
-        $this->communicatorService = $communicatorService;
-    }
-
     /**
      * Add query to queue
      *
@@ -29,7 +20,7 @@ class QueryPoolService
      * @param Promise $promise
      * @throws \ReflectionException
      */
-    public function addAsyncQuery(
+    public function add(
         string $serviceName,
         Promise $promise
     ) {
@@ -41,20 +32,25 @@ class QueryPoolService
 
     /**
      * Resolve queries from queue
+     * @param CommunicatorServiceInterface $communicatorService
+     * @return array
      */
-    public function resolve()
+    public function resolve(CommunicatorServiceInterface $communicatorService)
     {
         foreach ($this->promises as $key => $promise) {
             /** @var AmqpMessage $result */
-            $result = $promise->receive();
-            $correlationId = $result->getHeader('correlation_id');
+            try {
+                $result = $promise->receive();
 
-            $response = $this->communicatorService->request($this->services[$correlationId])->getProducer()
-                ->getResponse()
-                ->hydrate($result->getBody())
-                ->getData();
+                $response = $communicatorService->request($this->services[$key])->getProducer()
+                    ->getResponse()
+                    ->hydrate($result->getBody())
+                    ->getData();
 
-            $this->queryResults[$this->services[$correlationId]] = !empty($response['data']) ? $response['data'] : null;
+                $this->queryResults[$this->services[$key]] = $response;
+            } catch (\Exception $e) {
+                $this->queryResults[$this->services[$key]] = null;
+            }
         }
 
         return $this->queryResults;

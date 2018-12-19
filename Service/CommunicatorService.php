@@ -4,7 +4,7 @@ namespace Garlic\Bus\Service;
 
 use Garlic\Bus\Service\Interfaces\CommunicatorServiceInterface;
 use Garlic\Bus\Service\Interfaces\ProducerInterface;
-use Garlic\Bus\Service\Pool\CommunicationPoolService;
+use Garlic\Bus\Service\Pool\QueryPoolService;
 use Garlic\Bus\Service\Producer\CommandProducer;
 use Garlic\Bus\Service\Producer\RequestProducer;
 use Garlic\Bus\Service\Request\RequestService;
@@ -35,12 +35,12 @@ class CommunicatorService implements CommunicatorServiceInterface
     /** @var CommandProducer */
     private $commandProducer;
 
-    /** @var CommunicationPoolService */
-    private $communicationPoolService;
+    /** @var QueryPoolService */
+    private $queryPoolService;
 
     /**
      * CommunicatorService constructor.
-     * @param CommunicationPoolService $communicationPoolService
+     * @param QueryPoolService $queryPoolService
      * @param RequestProducer $requestProducer
      * @param CommandProducer $commandProducer
      * @param RequestService $request
@@ -48,7 +48,7 @@ class CommunicatorService implements CommunicatorServiceInterface
      * @param $namespace
      */
     public function __construct(
-        CommunicationPoolService $communicationPoolService,
+        QueryPoolService $queryPoolService,
         RequestProducer $requestProducer,
         CommandProducer $commandProducer,
         RequestService $request,
@@ -60,7 +60,7 @@ class CommunicatorService implements CommunicatorServiceInterface
         $this->requestStack = $requestStack;
         $this->namespace = $namespace;
         $this->commandProducer = $commandProducer;
-        $this->communicationPoolService = $communicationPoolService;
+        $this->queryPoolService = $queryPoolService;
     }
 
     /**
@@ -192,12 +192,46 @@ class CommunicatorService implements CommunicatorServiceInterface
     }
 
     /**
-     * Return communication pool service for async request
+     * Add requests to query pool data
      *
-     * @return CommunicationPoolService
+     * @param string $service
+     * @param string $route
+     * @param array $path
+     * @param array $query
+     * @param array $headers
+     * @return CommunicatorService
+     * @throws \ReflectionException
      */
-    public function createPool()
+    public function pool(
+        string $service,
+        string $route,
+        array $path = [],
+        array $query = [],
+        array $headers = []
+    ) {
+        $request = $this->requestStack->getCurrentRequest();
+        $headers = array_merge(null === $request ? [] : $request->headers->all(), $headers);
+
+
+        $promise = $this->request($service)->getProducer()->getPromise(
+            $this->requestService->create(
+                ($route != 'root') ? $this->convertToPath($route) : '/',
+                $path,
+                $query,
+                $headers,
+                $this->method
+            )
+        );
+        $this->queryPoolService->add($service, $promise);
+
+        return $this;
+    }
+
+    /**
+     * Fetch result from query pool data
+     */
+    public function fetch()
     {
-        return $this->communicationPoolService;
+        return $this->queryPoolService->resolve($this);
     }
 }
