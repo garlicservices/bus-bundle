@@ -63,7 +63,7 @@ $data = $this->get('communicator')
 #### Making async batch request with parallel processing
 
 ```php
-$communicator = $this->get('communicator')
+$data = $this->get('communicator')
     ->pool(
         'service1', // Target service name
         '/',        // Route to the target service action (example: /user/get)
