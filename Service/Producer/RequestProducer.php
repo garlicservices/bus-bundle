@@ -43,7 +43,7 @@ class RequestProducer extends RpcProducerAbstract implements ProducerInterface
     }
 
     /**
-     * Get responce instance
+     * Get response instance
      *
      * @return \Garlic\Bus\Service\Request\ResponseService
      */

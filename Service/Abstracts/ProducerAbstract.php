@@ -2,8 +2,9 @@
 
 namespace Garlic\Bus\Service\Abstracts;
 
+use Garlic\Bus\Service\Interfaces\ProducerInterface;
 
-abstract class ProducerAbstract
+abstract class ProducerAbstract implements ProducerInterface
 {
     const QUEUE_SUFFIX = 'queue';
     const NAME_SPACE_SEPARATOR = '.';

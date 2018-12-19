@@ -18,9 +18,9 @@ interface CommunicatorServiceInterface
      * Send request (event/command)
      *
      * @param string $route
-     * @param array  $path
-     * @param array  $query
-     * @param array  $headers
+     * @param array $path
+     * @param array $query
+     * @param array $headers
      *
      * @return mixed
      */
@@ -46,4 +46,16 @@ interface CommunicatorServiceInterface
      * @return $this
      */
     public function delete();
+
+    /**
+     * Add request to async pool
+     *
+     * @param string $service
+     * @param string $route
+     * @param array $path
+     * @param array $query
+     * @param array $headers
+     * @return $this
+     */
+    public function pool(string $service, string $route, array $path = [], array $query = [], array $headers = []);
 }

@@ -60,6 +60,7 @@ services:
         class: Garlic\Bus\Service\CommunicatorService
         public: true
         arguments:
+            - '@Garlic\Bus\Service\Pool\QueryPoolService'
             - "@service.request.producer"
             - "@service.command.producer"
             - "@service.request"
