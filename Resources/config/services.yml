@@ -86,6 +86,7 @@ services:
             - "@service.event.producer"
             - "@service.request.producer"
             - "@service.command.producer"
+            - '@Garlic\Bus\Service\Pool\QueryPoolService'
             - "@service.request"
             - "@request_stack"
             - "%env(SERVICE_NAMESPACE)%"

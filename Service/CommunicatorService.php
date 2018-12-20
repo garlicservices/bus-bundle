@@ -4,6 +4,7 @@ namespace Garlic\Bus\Service;
 
 use Garlic\Bus\Service\Interfaces\CommunicatorServiceInterface;
 use Garlic\Bus\Service\Interfaces\ProducerInterface;
+use Garlic\Bus\Service\Pool\QueryPoolService;
 use Garlic\Bus\Service\Producer\CommandProducer;
 use Garlic\Bus\Service\Producer\EventProducer;
 use Garlic\Bus\Service\Producer\RequestProducer;
@@ -20,7 +21,7 @@ class CommunicatorService implements CommunicatorServiceInterface
     /** @var  RequestService */
     private $requestService;
 
-    /** @var  ProducerInterface */
+    /** @var ProducerInterface */
     private $producer;
 
     /** @var  RequestStack */
@@ -35,6 +36,9 @@ class CommunicatorService implements CommunicatorServiceInterface
     /** @var CommandProducer */
     private $commandProducer;
 
+    /** @var QueryPoolService */
+    private $queryPoolService;
+
     /** @var EventProducer */
     private $eventProducer;
 
@@ -43,6 +47,7 @@ class CommunicatorService implements CommunicatorServiceInterface
      * @param EventProducer $eventProducer
      * @param RequestProducer $requestProducer
      * @param CommandProducer $commandProducer
+     * @param QueryPoolService $queryPoolService
      * @param RequestService $request
      * @param RequestStack $requestStack
      * @param $namespace
@@ -51,6 +56,7 @@ class CommunicatorService implements CommunicatorServiceInterface
         EventProducer $eventProducer,
         RequestProducer $requestProducer,
         CommandProducer $commandProducer,
+        QueryPoolService $queryPoolService,
         RequestService $request,
         RequestStack $requestStack,
         $namespace
@@ -61,6 +67,7 @@ class CommunicatorService implements CommunicatorServiceInterface
         $this->namespace = $namespace;
         $this->commandProducer = $commandProducer;
         $this->eventProducer = $eventProducer;
+        $this->queryPoolService = $queryPoolService;
     }
 
     /**
@@ -75,7 +82,7 @@ class CommunicatorService implements CommunicatorServiceInterface
         return call_user_func_array(
             [$this, 'send'],
             array_merge(
-                [($name != 'root')?$this->convertToPath($name):'/'],
+                [($name != 'root') ? $this->convertToPath($name) : '/'],
                 $arguments
             )
         );
@@ -137,7 +144,7 @@ class CommunicatorService implements CommunicatorServiceInterface
 
         return $this;
     }
-    
+
     /**
      * Send request (event/command)
      *
@@ -163,34 +170,6 @@ class CommunicatorService implements CommunicatorServiceInterface
         $this->method = 'GET';
 
         return $response;
-    }
-
-    /**
-     * Send query/message to queue and returns Promise
-     *
-     * @param string $route
-     * @param array $path
-     * @param array $query
-     * @param array $headers
-     * @return mixed
-     */
-    public function sendAsync(
-        string $route,
-        array $path = [],
-        array $query = [],
-        array $headers = []
-    ) {
-        $request = $this->requestStack->getCurrentRequest();
-        $headers = array_merge(null === $request ? [] : $request->headers->all(), $headers);
-
-        $promise = $this->producer->getPromise(
-            $this->requestService->create(($route != 'root')?$this->convertToPath($route):'/', $path, $query, $headers, $this->method)
-        );
-
-
-        $this->method = 'GET';
-
-        return $promise;
     }
 
     /**
@@ -248,5 +227,49 @@ class CommunicatorService implements CommunicatorServiceInterface
     public function getProducer()
     {
         return $this->producer;
+    }
+
+    /**
+     * Add requests to query pool data
+     *
+     * @param string $service
+     * @param string $route
+     * @param array $path
+     * @param array $query
+     * @param array $headers
+     * @return CommunicatorService
+     * @throws \ReflectionException
+     */
+    public function pool(
+        string $service,
+        string $route,
+        array $path = [],
+        array $query = [],
+        array $headers = []
+    ) {
+        $request = $this->requestStack->getCurrentRequest();
+        $headers = array_merge(null === $request ? [] : $request->headers->all(), $headers);
+
+
+        $promise = $this->request($service)->getProducer()->getPromise(
+            $this->requestService->create(
+                ($route != 'root') ? $this->convertToPath($route) : '/',
+                $path,
+                $query,
+                $headers,
+                $this->method
+            )
+        );
+        $this->queryPoolService->add($service, $promise);
+
+        return $this;
+    }
+
+    /**
+     * Fetch result from query pool data
+     */
+    public function fetch()
+    {
+        return $this->queryPoolService->resolve($this);
     }
 }
