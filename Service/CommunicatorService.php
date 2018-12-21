@@ -110,7 +110,9 @@ class CommunicatorService implements CommunicatorServiceInterface
      */
     public function event($eventName, array $payload)
     {
-        $this->producer = $this->eventProducer->setTargetServiceName('multicast_event');
+        $topic = getenv('MULTICAST_TOPIC_NAME') ? getenv('MULTICAST_TOPIC_NAME') : 'multicast_event';
+
+        $this->producer = $this->eventProducer->setTargetServiceName($this->namespace . '.' . $topic);
 
         $this->send($eventName, $payload);
 

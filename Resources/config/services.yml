@@ -1,6 +1,3 @@
-parameters:
-   multicast_topic_name: "multicast_event"
-
 services:
     _defaults:
         autowire: true
@@ -40,7 +37,7 @@ services:
             - "@router"
             - "@kernel"
         tags:
-            - { name: 'enqueue.client.processor', topicName: '%multicast_topic_name%'}
+            - { name: 'enqueue.client.processor', topicName: '%env(SERVICE_NAMESPACE)%.%env(MULTICAST_TOPIC_NAME)%'}
 
     service.request.producer:
         class: Garlic\Bus\Service\Producer\RequestProducer
