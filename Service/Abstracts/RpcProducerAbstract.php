@@ -13,7 +13,10 @@ use Enqueue\Client\Producer;
 use Enqueue\Rpc\RpcFactory;
 use Garlic\Bus\Service\Request\ResponseService;
 use Enqueue\Util\UUID;
+use Interop\Amqp\Impl\AmqpMessage;
+use Interop\Amqp\Impl\AmqpTopic;
 use Interop\Queue\PsrContext;
+use Symfony\Component\DependencyInjection\Container;
 
 abstract class RpcProducerAbstract extends ProducerAbstract
 {
@@ -88,5 +91,29 @@ abstract class RpcProducerAbstract extends ProducerAbstract
         }
 
         return false;
+    }
+
+    /**
+     * Send multicast event
+     *
+     * @param $name
+     * @param AmqpMessage $message
+     * @throws \Interop\Queue\Exception
+     * @throws \Interop\Queue\InvalidDestinationException
+     * @throws \Interop\Queue\InvalidMessageException
+     */
+    public function sendEvent($name, $message)
+    {
+        if (false == $message instanceof Message) {
+            $message = $this->context->createMessage($message);
+        }
+
+        $message->setProperty(Config::PARAMETER_TOPIC_NAME, $name);
+
+        $topic = $this->context->createTopic('enqueue.default');
+        $topic->setType(AmqpTopic::TYPE_FANOUT);
+        $topic->addFlag(AmqpTopic::FLAG_DURABLE);
+
+        $this->context->createProducer()->send($topic, $message);
     }
 }

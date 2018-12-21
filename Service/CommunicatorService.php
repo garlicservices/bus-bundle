@@ -6,6 +6,7 @@ use Garlic\Bus\Service\Interfaces\CommunicatorServiceInterface;
 use Garlic\Bus\Service\Interfaces\ProducerInterface;
 use Garlic\Bus\Service\Pool\QueryPoolService;
 use Garlic\Bus\Service\Producer\CommandProducer;
+use Garlic\Bus\Service\Producer\EventProducer;
 use Garlic\Bus\Service\Producer\RequestProducer;
 use Garlic\Bus\Service\Request\RequestService;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -38,19 +39,24 @@ class CommunicatorService implements CommunicatorServiceInterface
     /** @var QueryPoolService */
     private $queryPoolService;
 
+    /** @var EventProducer */
+    private $eventProducer;
+
     /**
      * CommunicatorService constructor.
-     * @param QueryPoolService $queryPoolService
+     * @param EventProducer $eventProducer
      * @param RequestProducer $requestProducer
      * @param CommandProducer $commandProducer
+     * @param QueryPoolService $queryPoolService
      * @param RequestService $request
      * @param RequestStack $requestStack
      * @param $namespace
      */
     public function __construct(
-        QueryPoolService $queryPoolService,
+        EventProducer $eventProducer,
         RequestProducer $requestProducer,
         CommandProducer $commandProducer,
+        QueryPoolService $queryPoolService,
         RequestService $request,
         RequestStack $requestStack,
         $namespace
@@ -60,6 +66,7 @@ class CommunicatorService implements CommunicatorServiceInterface
         $this->requestStack = $requestStack;
         $this->namespace = $namespace;
         $this->commandProducer = $commandProducer;
+        $this->eventProducer = $eventProducer;
         $this->queryPoolService = $queryPoolService;
     }
 
@@ -90,6 +97,39 @@ class CommunicatorService implements CommunicatorServiceInterface
     public function request($service)
     {
         $this->producer = $this->requestProducer->setTargetServiceName($service);
+
+        return $this;
+    }
+
+    /**
+     * Create event producer to the service
+     *
+     * @param $eventName
+     * @param array $payload
+     * @return $this
+     */
+    public function event($eventName, array $payload)
+    {
+        $topic = getenv('MULTICAST_TOPIC_NAME') ? getenv('MULTICAST_TOPIC_NAME') : 'multicast_event';
+
+        $this->producer = $this->eventProducer->setTargetServiceName($this->namespace . '.' . $topic);
+
+        $this->send($eventName, $payload);
+
+        return $this;
+    }
+
+    /**
+     * Create event producer to the service
+     *
+     * @param array $payload
+     * @return $this
+     */
+    public function serviceDiscoveryEvent(array $payload)
+    {
+        $this->producer = $this->eventProducer->setTargetServiceName('serviceDiscovery');
+
+        $this->send('serviceDiscovery', $payload);
 
         return $this;
     }
