@@ -1,3 +1,7 @@
+parameters:
+    parameter_namespace: '%env(SERVICE_NAMESPACE)%'
+    parameter_topic: '%env(MULTICAST_TOPIC_NAME)%'
+
 services:
     _defaults:
         autowire: true
@@ -37,7 +41,7 @@ services:
             - "@router"
             - "@kernel"
         tags:
-            - { name: 'enqueue.client.processor', topicName: '%env(SERVICE_NAMESPACE)%.%env(MULTICAST_TOPIC_NAME)%'}
+        - { name: 'enqueue.client.processor', topicName: "%parameter_namespace%.%parameter_topic%"}
 
     service.request.producer:
         class: Garlic\Bus\Service\Producer\RequestProducer
@@ -90,10 +94,6 @@ services:
 
     communicator:
         alias: Garlic\Bus\Service\CommunicatorService
-        public: true
-
-    Garlic\Bus\Service\GraphQLService:
-        class: Garlic\Bus\Service\GraphQLService
         public: true
 
     Garlic\Bus\Service\Pool\:
