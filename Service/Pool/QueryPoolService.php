@@ -3,6 +3,7 @@
 namespace Garlic\Bus\Service\Pool;
 
 use Enqueue\Rpc\Promise;
+use Garlic\Bus\Entity\Response;
 use Garlic\Bus\Service\Interfaces\CommunicatorServiceInterface;
 use Interop\Amqp\Impl\AmqpMessage;
 
@@ -11,6 +12,7 @@ class QueryPoolService
     protected $promises = [];
     protected $services = [];
     protected $queryBuilders = [];
+    /** @var Response[] */
     protected $queryResults = [];
 
     /**
@@ -33,7 +35,7 @@ class QueryPoolService
     /**
      * Resolve queries from queue
      * @param CommunicatorServiceInterface $communicatorService
-     * @return array
+     * @return Response[]
      */
     public function resolve(CommunicatorServiceInterface $communicatorService)
     {
@@ -44,8 +46,7 @@ class QueryPoolService
 
                 $response = $communicatorService->request($this->services[$key])->getProducer()
                     ->getResponse()
-                    ->hydrate($result->getBody())
-                    ->getData();
+                    ->hydrate($result->getBody());
 
                 $this->queryResults[$this->services[$key]] = $response;
             } catch (\Exception $e) {
