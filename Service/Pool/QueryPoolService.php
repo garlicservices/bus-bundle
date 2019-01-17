@@ -3,6 +3,7 @@
 namespace Garlic\Bus\Service\Pool;
 
 use Enqueue\Rpc\Promise;
+use Enqueue\Rpc\TimeoutException;
 use Garlic\Bus\Entity\Response;
 use Garlic\Bus\Service\Interfaces\CommunicatorServiceInterface;
 use Interop\Amqp\Impl\AmqpMessage;
@@ -49,8 +50,10 @@ class QueryPoolService
                     ->hydrate($result->getBody());
 
                 $this->queryResults[$this->services[$key]] = $response;
+            } catch (TimeoutException $e) {
+                $this->queryResults[$this->services[$key]] = new Response($e->getMessage(), 503);
             } catch (\Exception $e) {
-                $this->queryResults[$this->services[$key]] = null;
+                $this->queryResults[$this->services[$key]] = new Response($e->getMessage(), $e->getCode());
             }
         }
 
