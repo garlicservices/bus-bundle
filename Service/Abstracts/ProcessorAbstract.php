@@ -90,7 +90,7 @@ abstract class ProcessorAbstract
                 'Method not allowed',
                 Response::HTTP_METHOD_NOT_ALLOWED
             );
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             $response = new Response(
                 ($exception->getMessage()) ? $exception->getMessage() : 'Internal server error',
                 ($exception->getCode()) ? $exception->getCode() : Response::HTTP_INTERNAL_SERVER_ERROR
