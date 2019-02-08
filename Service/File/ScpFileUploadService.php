@@ -57,6 +57,7 @@ class ScpFileUploadService
     }
 
     /**
+     * Get ssh connection to host with file
      * @param $metadata
      *
      * @return resource
