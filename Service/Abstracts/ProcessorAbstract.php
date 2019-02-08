@@ -172,8 +172,9 @@ abstract class ProcessorAbstract
         );
 
         $request->headers->replace($data->getHeaders());
-        if(!empty($request->files->all())) {
-            $metadata = $this->fileHandler->handleFiles($request->files->all());
+        $files = $request->files->all();
+        if(!empty($files)) {
+            $metadata = $this->fileHandler->handleFiles($files);
             $request->headers->add(['file-meta-data' => $metadata]);
         }
         $request->setMethod($data->getMethod());
