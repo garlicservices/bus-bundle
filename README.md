@@ -102,5 +102,5 @@ upload files from Request
 get file from another service
 ```
  $uploader = $this->get('Garlic\Bus\Service\File\ScpFileUploadService');
- $uploader->getFile(['host_url' => '','origin_name' => '1.jpg','path' => ['public/upload/fsdljkahb.jpg']);
+ $uploader->getFile(['host_url' => '172.18.0.1','origin_name' => '1.jpg','path' => 'public/upload/fsdljkahb.jpg']);
 ```
