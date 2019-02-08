@@ -80,3 +80,27 @@ $data = $this->get('communicator')
         )
     ->fetch();      // Get response from async queries pool
 ```
+
+#### Working with files
+make sure you add variables to .env
+```
+### host url, will be used by another service to get files from current service
+HOST_URL=172.18.1.14
+
+###files will be uploaded to this dir
+UPLOAD_DIR = public/upload
+
+###should be same for every service using same bus
+SCP_USERNAME=www-data
+SCP_PASSWORD=KJLgbJ32PIHDJU4
+```
+upload files from Request
+```
+ $handler = $this->get('Garlic\Bus\Service\File\FileHandlerService');
+ $handler->handleFiles($_FILES['pictures']);
+```
+get file from another service
+```
+ $uploader = $this->get('Garlic\Bus\Service\File\ScpFileUploadService');
+ $uploader->getFile(['host_url' => '','origin_name' => '1.jpg','path' => ['public/upload/fsdljkahb.jpg']);
+```
