@@ -3,6 +3,7 @@
 namespace Garlic\Bus\Service\Abstracts;
 
 use App\Kernel;
+use Garlic\Bus\Service\File\FileHandlerService;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrMessage;
 use Psr\Log\LoggerInterface;
@@ -45,25 +46,35 @@ abstract class ProcessorAbstract
      * @var string
      */
     public static $type;
+    /**
+     * @var FileHandlerService
+     */
+    private $fileHandler;
 
     /**
      * RequestProcessor constructor.
-     * @param RequestService $request
-     * @param ResponseService $response
-     * @param Router $router
+     *
+     * @param RequestService     $request
+     * @param ResponseService    $response
+     * @param Router             $router
+     * @param Kernel             $kernel
+     * @param LoggerInterface    $logger
+     * @param FileHandlerService $fileHandler
      */
     public function __construct(
         RequestService $request,
         ResponseService $response,
         Router $router,
         Kernel $kernel,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        FileHandlerService $fileHandler
     ) {
         $this->request = $request;
         $this->response = $response;
         $this->router = $router;
         $this->kernel = $kernel;
         $this->logger = $logger;
+        $this->fileHandler = $fileHandler;
     }
 
     /**
@@ -139,8 +150,10 @@ abstract class ProcessorAbstract
      * Create request
      *
      * @param Data $data
-     * @param $route
+     * @param      $route
+     *
      * @return Request
+     * @throws \Garlic\Bus\Exceptions\FileUploadException
      */
     protected function request(Data $data, $route)
     {
@@ -159,6 +172,11 @@ abstract class ProcessorAbstract
         );
 
         $request->headers->replace($data->getHeaders());
+        $files = $request->files->all();
+        if(!empty($files)) {
+            $metadata = $this->fileHandler->handleFiles($files);
+            $request->headers->add(['file-meta-data' => $metadata]);
+        }
         $request->setMethod($data->getMethod());
 
         return $request;

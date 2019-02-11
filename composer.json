@@ -21,6 +21,7 @@
     "enqueue/enqueue-bundle": "^0.8",
     "enqueue/amqp-ext": "^0.8",
     "dflydev/dot-access-data": "^2.0",
-    "ext-json": "*"
+    "ext-json": "*",
+    "ext-ssh2": "*",
   }
 }

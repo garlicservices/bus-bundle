@@ -98,3 +98,15 @@ services:
 
     Garlic\Bus\Service\Pool\:
       resource: '../../Service/Pool/*'
+
+    Garlic\Bus\Service\File\FileHandlerService:
+        public: true
+        arguments:
+            - "%env(HOST_URL)%"
+            - "%env(UPLOAD_DIR)%"
+    Garlic\Bus\Service\File\ScpFileUploadService:
+        public: true
+        arguments:
+            - "%env(SCP_USERNAME)%"
+            - "%env(SCP_PASSWORD)%"
+            - "%env(UPLOAD_DIR)%"
