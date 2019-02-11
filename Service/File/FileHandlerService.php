@@ -12,11 +12,11 @@ use Garlic\Bus\Exceptions\FileUploadException;
 class FileHandlerService
 {
     /**
-     * @var
+     * @var string
      */
     private $hostUrl;
     /**
-     * @var
+     * @var string
      */
     private $uploadDir;
 
