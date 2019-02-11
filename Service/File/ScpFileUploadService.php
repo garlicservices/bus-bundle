@@ -43,12 +43,17 @@ class ScpFileUploadService
      *
      * @return string
      * @throws FileUploadException
+     * @throws \HttpException
      */
     public function getFile(array $metadata)
     {
         $connection = $this->getSshConnection($metadata);
-        $filePath = $this->uploadDir . md5(time() . $metadata['origin_name']);
-        ssh2_scp_recv($connection, $metadata['path'], $filePath);
+        $filePath = $this->uploadDir.md5(time().$metadata['origin_name']);
+        try {
+            ssh2_scp_recv($connection, $metadata['path'], $filePath);
+        } catch (\Exception $e) {
+            throw new \HttpException($e->getMessage(), $e->getCode());
+        }
         if (!file_exists($filePath)) {
             throw new FileUploadException($metadata['path']);
         }
@@ -58,6 +63,7 @@ class ScpFileUploadService
 
     /**
      * Get ssh connection to host with file
+     *
      * @param $metadata
      *
      * @return resource
