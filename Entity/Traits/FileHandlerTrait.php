@@ -27,6 +27,12 @@ trait FileHandlerTrait
         $this->handlerService = $handlerService;
     }
 
+    /**
+     * check files in request, handle it to upload folder and add meta-data to headers
+     * @param Request $request
+     *
+     * @throws \Garlic\Bus\Exceptions\FileUploadException
+     */
     public function handleFiles(Request &$request)
     {
         $files = $request->files->all();
