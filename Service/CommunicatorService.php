@@ -2,6 +2,7 @@
 
 namespace Garlic\Bus\Service;
 
+use Garlic\Bus\Entity\Traits\FileHandlerTrait;
 use Garlic\Bus\Service\Interfaces\CommunicatorServiceInterface;
 use Garlic\Bus\Service\Interfaces\ProducerInterface;
 use Garlic\Bus\Service\Pool\QueryPoolService;
@@ -13,6 +14,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class CommunicatorService implements CommunicatorServiceInterface
 {
+    use FileHandlerTrait;
     const NAME_SPACE_SEPARATOR = '.';
 
     /** @var  RequestProducer */
@@ -163,6 +165,7 @@ class CommunicatorService implements CommunicatorServiceInterface
         array $headers = []
     ) {
         $request = $this->requestStack->getCurrentRequest();
+        $this->handleFiles($request);
         $headers = array_merge(null === $request ? [] : $request->headers->all(), $headers);
 
         $response = $this->producer->send(
@@ -250,6 +253,7 @@ class CommunicatorService implements CommunicatorServiceInterface
         array $headers = []
     ) {
         $request = $this->requestStack->getCurrentRequest();
+        $this->handleFiles($request);
         $headers = array_merge(null === $request ? [] : $request->headers->all(), $headers);
 
 

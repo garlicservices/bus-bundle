@@ -3,6 +3,8 @@
 namespace Garlic\Bus\Service\File;
 
 use Garlic\Bus\Exceptions\FileUploadException;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Class FileHandlerService
@@ -26,10 +28,10 @@ class FileHandlerService
      * @param $hostUrl
      * @param $uploadDir
      */
-    public function __construct($hostUrl, $uploadDir)
+    public function __construct($hostUrl, $uploadDir = null)
     {
         $this->hostUrl = $hostUrl;
-        $this->uploadDir = $uploadDir;
+        $this->uploadDir = $uploadDir ?? getenv('DOCUMENT_ROOT') . "/upload/";
     }
 
     /**
@@ -42,15 +44,18 @@ class FileHandlerService
     {
         $metadata = [];
         foreach ($files as $file) {
-            if ($file['error'] == UPLOAD_ERR_OK) {
-                $filepath = getenv('UPLOAD_DIR') . md5(time() . basename($file["name"]));
-                if (move_uploaded_file($file['tmp_name'], $filepath)) {
-                    $metadata['origin_name'] = [
-                        'host_url'      => $this->hostUrl,
-                        'path'          => $filepath,
-                        'origin_name'   => $file['name'],
-                        'type'          => $file['type'],
-                        'size'          => $file['size']
+            /**@var $file  UploadedFile */
+            if ($file->getError() == UPLOAD_ERR_OK) {
+                $originalName = $file->getClientOriginalName();
+                $extension = $file->getClientOriginalExtension();
+                /**@var $newFile  File */
+                if ($newFile = $file->move($this->uploadDir, md5(time().basename($originalName)) . '.' . $extension)) {
+                    $metadata[$originalName] = [
+                        'host_url'    => $this->hostUrl,
+                        'path'        => $newFile->getPathname(),
+                        'origin_name' => $originalName,
+                        'type'        => $newFile->getMimeType(),
+                        'size'        => $newFile->getSize(),
                     ];
                 } else {
                     throw new FileUploadException('File upload error');

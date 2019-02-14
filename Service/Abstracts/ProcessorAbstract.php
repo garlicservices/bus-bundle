@@ -3,7 +3,7 @@
 namespace Garlic\Bus\Service\Abstracts;
 
 use App\Kernel;
-use Garlic\Bus\Service\File\FileHandlerService;
+use Garlic\Bus\Entity\Traits\FileHandlerTrait;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrMessage;
 use Psr\Log\LoggerInterface;
@@ -22,6 +22,7 @@ use Garlic\Bus\Service\Request\ResponseService;
  */
 abstract class ProcessorAbstract
 {
+    use FileHandlerTrait;
     /** @var  Router */
     protected $router;
 
@@ -46,10 +47,6 @@ abstract class ProcessorAbstract
      * @var string
      */
     public static $type;
-    /**
-     * @var FileHandlerService
-     */
-    private $fileHandler;
 
     /**
      * RequestProcessor constructor.
@@ -59,22 +56,19 @@ abstract class ProcessorAbstract
      * @param Router             $router
      * @param Kernel             $kernel
      * @param LoggerInterface    $logger
-     * @param FileHandlerService $fileHandler
      */
     public function __construct(
         RequestService $request,
         ResponseService $response,
         Router $router,
         Kernel $kernel,
-        LoggerInterface $logger,
-        FileHandlerService $fileHandler
+        LoggerInterface $logger
     ) {
         $this->request = $request;
         $this->response = $response;
         $this->router = $router;
         $this->kernel = $kernel;
         $this->logger = $logger;
-        $this->fileHandler = $fileHandler;
     }
 
     /**
@@ -172,11 +166,7 @@ abstract class ProcessorAbstract
         );
 
         $request->headers->replace($data->getHeaders());
-        $files = $request->files->all();
-        if(!empty($files)) {
-            $metadata = $this->fileHandler->handleFiles($files);
-            $request->headers->add(['file-meta-data' => $metadata]);
-        }
+        $this->handleFiles($request);
         $request->setMethod($data->getMethod());
 
         return $request;
