@@ -153,10 +153,12 @@ class CommunicatorService implements CommunicatorServiceInterface
      * Send request (event/command)
      *
      * @param string $route
-     * @param array $path
-     * @param array $query
-     * @param array $headers
+     * @param array  $path
+     * @param array  $query
+     * @param array  $headers
+     *
      * @return mixed
+     * @throws \Garlic\Bus\Exceptions\FileUploadException
      */
     public function send(
         string $route,
@@ -165,7 +167,9 @@ class CommunicatorService implements CommunicatorServiceInterface
         array $headers = []
     ) {
         $request = $this->requestStack->getCurrentRequest();
-        $this->handleFiles($request);
+        if(!empty($request)) {
+            $this->handleFiles($request);
+        }
         $headers = array_merge(null === $request ? [] : $request->headers->all(), $headers);
 
         $response = $this->producer->send(
@@ -239,10 +243,12 @@ class CommunicatorService implements CommunicatorServiceInterface
      *
      * @param string $service
      * @param string $route
-     * @param array $path
-     * @param array $query
-     * @param array $headers
+     * @param array  $path
+     * @param array  $query
+     * @param array  $headers
+     *
      * @return CommunicatorService
+     * @throws \Garlic\Bus\Exceptions\FileUploadException
      * @throws \ReflectionException
      */
     public function pool(
@@ -253,7 +259,9 @@ class CommunicatorService implements CommunicatorServiceInterface
         array $headers = []
     ) {
         $request = $this->requestStack->getCurrentRequest();
-        $this->handleFiles($request);
+        if(!empty($request)) {
+            $this->handleFiles($request);
+        }
         $headers = array_merge(null === $request ? [] : $request->headers->all(), $headers);
 
 
