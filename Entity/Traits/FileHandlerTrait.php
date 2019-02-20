@@ -38,7 +38,7 @@ trait FileHandlerTrait
         $files = $request->files->all();
         if(!empty($files)) {
             $metadata = $this->handlerService->handleFiles($files);
-            $request->headers->add(['file-meta-data' => $metadata]);
+            $request->headers->add(['file-meta-data' => json_encode($metadata)]);
         }
     }
 }
