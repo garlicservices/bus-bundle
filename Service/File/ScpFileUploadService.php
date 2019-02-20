@@ -48,7 +48,7 @@ class ScpFileUploadService
     public function getFile(array $metadata)
     {
         $connection = $this->getSshConnection($metadata);
-        $filePath = $this->uploadDir . md5(time() . $metadata['origin_name']);
+        $filePath = $this->uploadDir . md5(time() . $metadata['origin_name']) . $metadata['extension'];
         try {
             ssh2_scp_recv($connection, $metadata['path'], $filePath);
         } catch (\Exception $e) {

@@ -56,6 +56,7 @@ class FileHandlerService
                         'origin_name' => $originalName,
                         'type'        => $newFile->getMimeType(),
                         'size'        => $newFile->getSize(),
+                        'extension'   => $extension
                     ];
                 } else {
                     throw new FileUploadException('File upload error');
