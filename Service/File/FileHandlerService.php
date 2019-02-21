@@ -23,15 +23,22 @@ class FileHandlerService
     private $uploadDir;
 
     /**
+     * @var int files will be deleted after this time(seconds)
+     */
+    private $fileHandleTime;
+
+    /**
      * FileHandlerService constructor.
      *
-     * @param $hostUrl
-     * @param $uploadDir
+     * @param     $hostUrl
+     * @param     $uploadDir
+     * @param int $fileHandleTime
      */
-    public function __construct($hostUrl, $uploadDir = null)
+    public function __construct($hostUrl, $uploadDir = null, $fileHandleTime = 1800)
     {
         $this->hostUrl = $hostUrl;
         $this->uploadDir = $uploadDir ?? getenv('DOCUMENT_ROOT') . "/upload/";
+        $this->fileHandleTime = $fileHandleTime;
     }
 
     /**
@@ -42,6 +49,7 @@ class FileHandlerService
      */
     public function handleFiles(array $files): array
     {
+        $this->removeOldFiles();
         $metadata = [];
         foreach ($files as $file) {
             /**@var $file  UploadedFile */
@@ -65,5 +73,20 @@ class FileHandlerService
         }
 
         return $metadata;
+    }
+
+    /**
+     * removes files that created before $fileHandleTime
+     */
+    private function removeOldFiles()
+    {
+        if ($handle = opendir($this->uploadDir)) {
+
+            while (false !== ($file = readdir($handle))) {
+                if (filectime($file)< (time()-$this->fileHandleTime)) {
+                    unlink($file);
+                }
+            }
+        }
     }
 }
