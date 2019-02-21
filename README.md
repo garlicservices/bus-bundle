@@ -30,6 +30,10 @@ redirect_stderr=true
 
 Now you can use Garlic Bus
 
+### Optional: You can set timeout which will used to wait for response
+
+Set variable REQUEST_TIMEOUT=30 where 30 is seconds
+
 ## Usage
 
 ### Common way to use 

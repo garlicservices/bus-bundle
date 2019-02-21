@@ -51,6 +51,7 @@ services:
             - "@service.response"
             - "%env(SERVICE_NAME)%"
             - "%env(SERVICE_NAMESPACE)%"
+            - "%env(REQUEST_TIMEOUT)%"
 
     service.command.producer:
         class: Garlic\Bus\Service\Producer\CommandProducer
