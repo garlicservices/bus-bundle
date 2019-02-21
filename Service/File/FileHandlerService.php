@@ -32,13 +32,13 @@ class FileHandlerService
      *
      * @param     $hostUrl
      * @param     $uploadDir
-     * @param int $fileHandleTime
+     * @param int $timeToDelete
      */
-    public function __construct($hostUrl, $uploadDir = null, $fileHandleTime = 1800)
+    public function __construct($hostUrl, $uploadDir = null, $timeToDelete = 1800)
     {
         $this->hostUrl = $hostUrl;
         $this->uploadDir = $uploadDir ?? getenv('DOCUMENT_ROOT') . "/upload/";
-        $this->fileHandleTime = $fileHandleTime;
+        $this->fileHandleTime = $timeToDelete;
     }
 
     /**
