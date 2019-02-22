@@ -86,8 +86,8 @@ class FileHandlerService
                 if (!is_file($file)) {
                     continue;
                 }
-                if (filectime($file)< (time() - $this->fileHandleTime)) {
-                    unlink($file);
+                if (filectime($this->uploadDir . $file)< (time() - $this->fileHandleTime)) {
+                    unlink($this->uploadDir . $file);
                 }
             }
         }
