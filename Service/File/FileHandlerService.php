@@ -83,8 +83,10 @@ class FileHandlerService
         if ($handle = opendir($this->uploadDir)) {
 
             while (false !== ($file = readdir($handle))) {
-                if (filectime($file)< (time()-$this->fileHandleTime)) {
-                    unlink($file);
+                if (is_file($file)) {
+                    if (filectime($this->uploadDir . $file) < (time() - $this->fileHandleTime)) {
+                        unlink($this->uploadDir . $file);
+                    }
                 }
             }
         }
