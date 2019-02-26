@@ -47,36 +47,17 @@ class ScpFileUploadService
      */
     public function getFile(array $metadata)
     {
-        $connection = $this->getSshConnection($metadata);
         $filePath = $this->uploadDir.md5(time().$metadata['origin_name']).'.'.$metadata['extension'];
         try {
-            ssh2_scp_recv($connection, $metadata['path'], $filePath);
+            exec('sshpass -p "'.getenv('SCP_PASSWORD').'" scp -v  '.getenv('SCP_USERNAME').'@'.$metadata['host_url'].':'
+                .$metadata['path'].' '.$filePath.' 2>&1', $output, $returnVar);
         } catch (\Exception $e) {
             throw new \HttpException($e->getMessage(), $e->getCode());
         }
-        if (!file_exists($filePath)) {
+        if (!file_exists($filePath) || $returnVar !== 0) {
             throw new FileUploadException($metadata['path']);
         }
 
         return $filePath;
-    }
-
-    /**
-     * Get ssh connection to host with file
-     *
-     * @param $metadata
-     *
-     * @return resource
-     * @throws \Exception
-     */
-    private function getSshConnection($metadata)
-    {
-        $connection = ssh2_connect($metadata['host_url'], 22);
-        if (ssh2_auth_password($connection, $this->username, $this->password)) {
-        } else {
-            throw new \Exception('Authentication Failed');
-        }
-
-        return $connection;
     }
 }
