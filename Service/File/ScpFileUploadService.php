@@ -50,11 +50,11 @@ class ScpFileUploadService
         $filePath = $this->uploadDir.md5(time().$metadata['origin_name']).'.'.$metadata['extension'];
         try {
             exec('sshpass -p "'.getenv('SCP_PASSWORD').'" scp -v  '.getenv('SCP_USERNAME').'@'.$metadata['host_url'].':'
-                .$metadata['path'].' '.$filePath.' 2>&1', $output, $return_var);
+                .$metadata['path'].' '.$filePath.' 2>&1', $output, $returnVar);
         } catch (\Exception $e) {
             throw new \HttpException($e->getMessage(), $e->getCode());
         }
-        if (!file_exists($filePath) || $return_var !== 0) {
+        if (!file_exists($filePath) || $returnVar !== 0) {
             throw new FileUploadException($metadata['path']);
         }
 
