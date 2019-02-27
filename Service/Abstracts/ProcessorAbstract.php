@@ -130,6 +130,7 @@ abstract class ProcessorAbstract
         $request = $this->request($data, $route);
         $response = $kernel->handle($request);
         $kernel->terminate($request, $response);
+        $kernel->shutdown();
 
         unset(
             $kernel,
