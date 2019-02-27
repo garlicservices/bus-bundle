@@ -1,6 +1,8 @@
 parameters:
     parameter_namespace: '%env(SERVICE_NAMESPACE)%'
     parameter_topic: '%env(MULTICAST_TOPIC_NAME)%'
+    env(REQUEST_TIMEOUT): 30000  
+    env(UPLOAD_DIR): '/var/www/public/upload/'
 
 services:
     _defaults:

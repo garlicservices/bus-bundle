@@ -49,7 +49,7 @@ class ScpFileUploadService
     {
         $filePath = $this->uploadDir.md5(time().$metadata['origin_name']).'.'.$metadata['extension'];
         try {
-            exec('sshpass -p "'.getenv('SCP_PASSWORD').'" scp -v  '.getenv('SCP_USERNAME').'@'.$metadata['host_url'].':'
+            exec('sshpass -p "'.getenv('SCP_PASSWORD').'" scp -o StrictHostKeyChecking=no '.getenv('SCP_USERNAME').'@'.$metadata['host_url'].':'
                 .$metadata['path'].' '.$filePath.' 2>&1', $output, $returnVar);
         } catch (\Exception $e) {
             throw new \HttpException($e->getMessage(), $e->getCode());
