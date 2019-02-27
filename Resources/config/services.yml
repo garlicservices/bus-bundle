@@ -1,6 +1,7 @@
 parameters:
     parameter_namespace: '%env(SERVICE_NAMESPACE)%'
     parameter_topic: '%env(MULTICAST_TOPIC_NAME)%'
+    env(REQUEST_TIMEOUT): 30000  
 
 services:
     _defaults:
