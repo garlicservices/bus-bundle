@@ -3,6 +3,7 @@
 namespace Garlic\Bus\Service\Abstracts;
 
 use App\Kernel;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Garlic\Bus\Entity\Traits\FileHandlerTrait;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrMessage;
@@ -54,14 +55,14 @@ abstract class ProcessorAbstract
      * @param RequestService     $request
      * @param ResponseService    $response
      * @param Router             $router
-     * @param Kernel             $kernel
+     * @param KernelInterface    $kernel
      * @param LoggerInterface    $logger
      */
     public function __construct(
         RequestService $request,
         ResponseService $response,
         Router $router,
-        Kernel $kernel,
+        KernelInterface $kernel,
         LoggerInterface $logger
     ) {
         $this->request = $request;
