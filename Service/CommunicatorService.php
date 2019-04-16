@@ -170,9 +170,6 @@ class CommunicatorService implements CommunicatorServiceInterface
         array $headers = []
     ) {
         $request = $this->requestStack->getCurrentRequest();
-        if(!empty($request)) {
-            $this->handleFiles($request);
-        }
         $headers = array_merge(null === $request ? [] : $request->headers->all(), $headers);
 
         $response = $this->producer->send(
@@ -262,7 +259,6 @@ class CommunicatorService implements CommunicatorServiceInterface
     ) {
         $request = $this->requestStack->getCurrentRequest();
         $headers = array_merge(null === $request ? [] : $request->headers->all(), $headers);
-
 
         $promise = $this->request($service)->getProducer()->getPromise(
             $this->requestService->create(
