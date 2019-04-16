@@ -10,6 +10,7 @@ use Garlic\Bus\Service\Producer\CommandProducer;
 use Garlic\Bus\Service\Producer\EventProducer;
 use Garlic\Bus\Service\Producer\RequestProducer;
 use Garlic\Bus\Service\Request\RequestService;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class CommunicatorService implements CommunicatorServiceInterface
@@ -156,7 +157,6 @@ class CommunicatorService implements CommunicatorServiceInterface
      * @param array  $path
      * @param array  $query
      * @param array  $headers
-     *
      * @return mixed
      * @throws \Garlic\Bus\Exceptions\FileUploadException
      */
@@ -167,9 +167,6 @@ class CommunicatorService implements CommunicatorServiceInterface
         array $headers = []
     ) {
         $request = $this->requestStack->getCurrentRequest();
-        if(!empty($request)) {
-            $this->handleFiles($request);
-        }
         $headers = array_merge(null === $request ? [] : $request->headers->all(), $headers);
 
         $response = $this->producer->send(
@@ -248,7 +245,6 @@ class CommunicatorService implements CommunicatorServiceInterface
      * @param array  $headers
      *
      * @return CommunicatorService
-     * @throws \Garlic\Bus\Exceptions\FileUploadException
      * @throws \ReflectionException
      */
     public function pool(
@@ -259,11 +255,7 @@ class CommunicatorService implements CommunicatorServiceInterface
         array $headers = []
     ) {
         $request = $this->requestStack->getCurrentRequest();
-        if(!empty($request)) {
-            $this->handleFiles($request);
-        }
         $headers = array_merge(null === $request ? [] : $request->headers->all(), $headers);
-
 
         $promise = $this->request($service)->getProducer()->getPromise(
             $this->requestService->create(
@@ -285,5 +277,19 @@ class CommunicatorService implements CommunicatorServiceInterface
     public function fetch()
     {
         return $this->queryPoolService->resolve($this);
+    }
+
+    /**
+     * check if there are files in request and handle it
+     * @return $this
+     * @throws \Garlic\Bus\Exceptions\FileUploadException
+     */
+    public function handleFilesFromRequest()
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        if(!empty($request)) {
+            $this->handleFiles($request);
+        }
+        return $this;
     }
 }
