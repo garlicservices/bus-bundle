@@ -15,12 +15,12 @@ use Garlic\Bus\Service\Request\ResponseService;
 use Enqueue\Util\UUID;
 use Interop\Amqp\Impl\AmqpMessage;
 use Interop\Amqp\Impl\AmqpTopic;
-use Interop\Queue\PsrContext;
+use Interop\Queue\Context;
 use Symfony\Component\DependencyInjection\Container;
 
 abstract class RpcProducerAbstract extends ProducerAbstract
 {
-    /** @var PsrContext */
+    /** @var Context\ */
     protected $context;
 
     /** @var RpcFactory */
@@ -34,15 +34,21 @@ abstract class RpcProducerAbstract extends ProducerAbstract
 
     /**
      * RequestProducer constructor.
-     * @param PsrContext $context
+     * @param Context $context
      * @param RpcFactory $promiseFactory
      * @param ResponseService $response
      * @param string $serviceName
      * @param string $nameSpace
      * @param int $timeout
      */
-    public function __construct(PsrContext $context, RpcFactory $promiseFactory, ResponseService $response, string $serviceName, string $nameSpace, int $timeout = 5000)
-    {
+    public function __construct(
+        Context $context,
+        RpcFactory $promiseFactory,
+        ResponseService $response,
+        string $serviceName,
+        string $nameSpace,
+        int $timeout = 5000
+    ) {
         $this->context = $context;
         $this->rpcFactory = $promiseFactory;
         $this->response = $response;
@@ -64,13 +70,14 @@ abstract class RpcProducerAbstract extends ProducerAbstract
         if (false == $message instanceof Message) {
             $message = $this->context->createMessage($message);
         }
+        $message->setProperty(Config::PROCESSOR, $reply ? 'service.request.processor' : 'service.command.processor');
 
         $queue = $this->context->createQueue($service);
 
         $deleteReplyQueue = false;
         $replyTo = $message->getReplyTo();
 
-        if($reply) {
+        if ($reply) {
             if (false == $replyTo) {
                 $message->setReplyTo($replyTo = $this->rpcFactory->createReplyTo());
                 $deleteReplyQueue = true;
@@ -83,7 +90,7 @@ abstract class RpcProducerAbstract extends ProducerAbstract
 
         $this->context->createProducer()->send($queue, $message);
 
-        if($reply) {
+        if ($reply) {
             $promise = $this->rpcFactory->createPromise($replyTo, $message->getCorrelationId(), $this->timeout);
             $promise->setDeleteReplyQueue($deleteReplyQueue);
 
@@ -108,7 +115,8 @@ abstract class RpcProducerAbstract extends ProducerAbstract
             $message = $this->context->createMessage($message);
         }
 
-        $message->setProperty(Config::PARAMETER_TOPIC_NAME, $name);
+        $message->setProperty(Config::TOPIC, $name);
+        $message->setProperty(Config::PROCESSOR, 'service.event.processor');
 
         $topic = $this->context->createTopic('enqueue.default');
         $topic->setType(AmqpTopic::TYPE_FANOUT);

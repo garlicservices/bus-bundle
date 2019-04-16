@@ -2,11 +2,10 @@
 
 namespace Garlic\Bus\Service\Abstracts;
 
-use App\Kernel;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Garlic\Bus\Entity\Traits\FileHandlerTrait;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
+use Interop\Queue\Context;
+use Interop\Queue\Message;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
@@ -75,7 +74,7 @@ abstract class ProcessorAbstract
     /**
      * {@inheritdoc}
      */
-    public function process(PsrMessage $message, PsrContext $context)
+    public function process(Message $message, Context $context)
     {
         /** @var Data $data */
         $data = $this->request->hydrate($message->getBody());
@@ -111,6 +110,7 @@ abstract class ProcessorAbstract
      *
      * @param Data $data
      * @return Response
+     * @throws \Garlic\Bus\Exceptions\FileUploadException
      */
     protected function run(Data $data)
     {

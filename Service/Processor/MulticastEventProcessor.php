@@ -4,25 +4,22 @@ namespace Garlic\Bus\Service\Processor;
 use Enqueue\Client\TopicSubscriberInterface;
 use Garlic\Bus\Event\BusEvent;
 use Garlic\Bus\Service\Abstracts\ProcessorConfigAbstract;
-use Interop\Queue\PsrProcessor;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Interop\Queue\Context;
+use Interop\Queue\Message;
+use Interop\Queue\Processor;
 
-class MulticastEventProcessor extends ProcessorConfigAbstract implements PsrProcessor
+class MulticastEventProcessor extends ProcessorConfigAbstract implements Processor
 {
     protected $prefix = 'bus.';
 
     /**
      * Emit bus multicast messages to symfony kernel instance
      *
-     * @param PsrMessage $message
-     * @param PsrContext $context
+     * @param Message $message
+     * @param Context $context
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function process(PsrMessage $message, PsrContext $context)
+    public function process(Message $message, Context $context)
     {
         $container = $this->kernel->getContainer();
 
