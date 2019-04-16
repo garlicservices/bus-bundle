@@ -116,7 +116,7 @@ class CommunicatorService implements CommunicatorServiceInterface
 
         $this->producer = $this->eventProducer->setTargetServiceName($this->namespace . '.' . $topic);
 
-        $this->send($eventName, $payload);
+        $this->send($eventName, $payload,[],[],false);
 
         return $this;
     }
@@ -131,7 +131,7 @@ class CommunicatorService implements CommunicatorServiceInterface
     {
         $this->producer = $this->eventProducer->setTargetServiceName('serviceDiscovery');
 
-        $this->send('serviceDiscovery', $payload);
+        $this->send('serviceDiscovery', $payload,[],[],false);
 
         return $this;
     }
@@ -157,6 +157,8 @@ class CommunicatorService implements CommunicatorServiceInterface
      * @param array  $query
      * @param array  $headers
      *
+     * @param bool   $handleRequestFiles
+     *
      * @return mixed
      * @throws \Garlic\Bus\Exceptions\FileUploadException
      */
@@ -164,10 +166,11 @@ class CommunicatorService implements CommunicatorServiceInterface
         string $route,
         array $path = [],
         array $query = [],
-        array $headers = []
+        array $headers = [],
+        $handleRequestFiles = true
     ) {
         $request = $this->requestStack->getCurrentRequest();
-        if(!empty($request)) {
+        if(!empty($request) && $handleRequestFiles) {
             $this->handleFiles($request);
         }
         $headers = array_merge(null === $request ? [] : $request->headers->all(), $headers);
