@@ -157,9 +157,6 @@ class CommunicatorService implements CommunicatorServiceInterface
      * @param array  $path
      * @param array  $query
      * @param array  $headers
-     *
-     * @param bool   $handleRequestFiles
-     *
      * @return mixed
      * @throws \Garlic\Bus\Exceptions\FileUploadException
      */
@@ -283,7 +280,7 @@ class CommunicatorService implements CommunicatorServiceInterface
     }
 
     /**
-     * check if there are files in request anf handle it
+     * check if there are files in request and handle it
      * @return $this
      * @throws \Garlic\Bus\Exceptions\FileUploadException
      */
