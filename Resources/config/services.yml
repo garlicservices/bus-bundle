@@ -1,7 +1,8 @@
 parameters:
     parameter_namespace: '%env(SERVICE_NAMESPACE)%'
+    parameter_name: '%env(SERVICE_NAME)%'
     parameter_topic: '%env(MULTICAST_TOPIC_NAME)%'
-    env(REQUEST_TIMEOUT): 30000  
+    env(REQUEST_TIMEOUT): 30000
     env(UPLOAD_DIR): '/var/www/public/upload/'
 
 services:
@@ -20,7 +21,7 @@ services:
             - "@kernel"
             - "@logger"
         tags:
-            - { name: 'enqueue.client.processor'}
+            - { name: 'enqueue.processor', topic: "%parameter_namespace%.%parameter_name%.request", client: 'bus' }
 
     service.command.processor:
         class: Garlic\Bus\Service\Processor\CommandProcessor
@@ -32,7 +33,7 @@ services:
             - "@kernel"
             - "@logger"
         tags:
-            - { name: 'enqueue.client.processor'}
+            - { name: 'enqueue.processor', topic: "%parameter_namespace%.%parameter_name%.command", client: 'bus' }
 
     service.event.processor:
         class: Garlic\Bus\Service\Processor\MulticastEventProcessor
@@ -43,13 +44,13 @@ services:
             - "@router"
             - "@kernel"
         tags:
-        - { name: 'enqueue.client.processor', topicName: "%parameter_namespace%.%parameter_topic%"}
+            - { name: 'enqueue.processor', topic: "%parameter_namespace%.%parameter_topic%", client: 'bus' }
 
     service.request.producer:
         class: Garlic\Bus\Service\Producer\RequestProducer
         arguments:
-            - "@enqueue.transport.context"
-            - '@enqueue.transport.rpc_factory'
+            - '@Interop\Queue\Context'
+            - '@Enqueue\Rpc\RpcFactory'
             - "@service.response"
             - "%env(SERVICE_NAME)%"
             - "%env(SERVICE_NAMESPACE)%"
@@ -58,8 +59,8 @@ services:
     service.command.producer:
         class: Garlic\Bus\Service\Producer\CommandProducer
         arguments:
-            - "@enqueue.transport.context"
-            - '@enqueue.transport.rpc_factory'
+            - '@Interop\Queue\Context'
+            - '@Enqueue\Rpc\RpcFactory'
             - "@service.response"
             - "%env(SERVICE_NAME)%"
             - "%env(SERVICE_NAMESPACE)%"
@@ -67,8 +68,8 @@ services:
     service.event.producer:
         class: Garlic\Bus\Service\Producer\EventProducer
         arguments:
-            - "@enqueue.transport.context"
-            - '@enqueue.transport.rpc_factory'
+            - '@Interop\Queue\Context'
+            - '@Enqueue\Rpc\RpcFactory'
             - "@service.response"
             - "%env(SERVICE_NAME)%"
             - "%env(SERVICE_NAMESPACE)%"
@@ -82,6 +83,10 @@ services:
         class: Garlic\Bus\Service\Request\ResponseService
         arguments:
             - "@jms_serializer.serializer"
+
+    Enqueue\Rpc\RpcFactory:
+        class: Enqueue\Rpc\RpcFactory
+        public: true
 
     Garlic\Bus\Service\CommunicatorService:
         class: Garlic\Bus\Service\CommunicatorService
@@ -100,7 +105,7 @@ services:
         public: true
 
     Garlic\Bus\Service\Pool\:
-      resource: '../../Service/Pool/*'
+        resource: '../../Service/Pool/*'
 
     Garlic\Bus\Service\File\FileHandlerService:
         public: true

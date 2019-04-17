@@ -23,7 +23,7 @@ class GarlicBusExtension extends Extension implements PrependExtensionInterface
         $configuration = new Configuration();
         $this->processConfiguration($configuration, $configs);
 
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
     }
 
@@ -33,21 +33,20 @@ class GarlicBusExtension extends Extension implements PrependExtensionInterface
     public function prepend(ContainerBuilder $container)
     {
         $config = [
-            'transport' => [
-                'default' => 'amqp',
-                'amqp' => [
-                    'driver' => 'ext',
-                    'host' => getenv('RABBIT_HOST'),
-                    'port' => getenv('RABBIT_PORT'),
-                    'user' => getenv('RABBIT_USER'),
-                    'pass' => getenv('RABBIT_PASSWORD'),
-                    'vhost' => getenv('RABBIT_DEFAULT_VHOST'),
-                    'receive_method' => 'basic_consume',
-                ]
+            'bus' => [
+                'transport' => [
+                    'dsn' => 'amqp://'.
+                        getenv('RABBIT_USER').':'.
+                        getenv('RABBIT_PASSWORD').'@'.
+                        getenv('RABBIT_HOST').':'.
+                        getenv('RABBIT_PORT').'/'.
+                        getenv('RABBIT_DEFAULT_VHOST'),
+                ],
+                'client' => [
+                    'app_name' => getenv('SERVICE_NAME'),
+                ],
             ],
-            'client' => [
-                'app_name' => getenv('SERVICE_NAME')
-            ]
+
         ];
 
         $container->prependExtensionConfig('enqueue', $config);

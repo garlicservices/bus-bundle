@@ -2,13 +2,13 @@
 
 namespace Garlic\Bus\Service\Processor;
 
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\PsrProcessor;
+use Interop\Queue\Context;
+use Interop\Queue\Message;
+use Interop\Queue\Processor;
 use Enqueue\Client\CommandSubscriberInterface;
 use Garlic\Bus\Service\Abstracts\ProcessorConfigAbstract;
 
-class CommandProcessor extends ProcessorConfigAbstract  implements PsrProcessor, CommandSubscriberInterface
+class CommandProcessor extends ProcessorConfigAbstract  implements Processor, CommandSubscriberInterface
 {
     /**
      * Type of message
@@ -18,7 +18,7 @@ class CommandProcessor extends ProcessorConfigAbstract  implements PsrProcessor,
     /**
      * {@inheritdoc}
      */
-    public function process(PsrMessage $message, PsrContext $context)
+    public function process(Message $message, Context $context)
     {
         $response = parent::process($message, $context);
         if (!$this->check($response->getStatusCode())) {
