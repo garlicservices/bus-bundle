@@ -116,7 +116,6 @@ abstract class RpcProducerAbstract extends ProducerAbstract
         }
 
         $message->setProperty(Config::TOPIC, $name);
-        $message->setProperty(Config::PROCESSOR, 'service.event.processor');
 
         $topic = $this->context->createTopic('enqueue.default');
         $topic->setType(AmqpTopic::TYPE_FANOUT);
